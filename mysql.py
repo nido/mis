@@ -1,6 +1,7 @@
 from MySQLdb import connect
 
 connection = connect(host='localhost', user='mis', passwd='password', db='mis');
+from platform import node
 
 def test_if_in_database(filename):
 	mysql_filename = connection.escape(filename)
@@ -12,9 +13,10 @@ def test_if_in_database(filename):
 		return False
 	return True
 
-def insert_into_database(sha, filename, active=True):
+def insert_into_database(sha, filename, active=True, nodename=node()):
 	mysql_filename = connection.escape(filename)
-	sql_string = "insert into files (path, sha512, active) values (" + mysql_filename + ", '" + sha + "', " + active.__str__() + ");"
+	mysql_node = connection.escape(nodename)
+	sql_string = "insert into files (path, sha512, active, node) values (" + mysql_filename + ", '" + sha + "', " + active.__str__() + ", " + mysql_node + ");"
 	cursor = connection.cursor()
 	results = cursor.execute(sql_string)
 	if results == 0:
