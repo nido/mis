@@ -24,17 +24,19 @@ open(logfile, 'a').close()
 
 
 filelog = getLogger('log')
-filelog.setLevel(WARN + 1)
-handler = RotatingFileHandler(logfile, maxBytes=100, backupCount = 5)
+filelog.setLevel(DEBUG)
+handler = RotatingFileHandler(logfile, maxBytes=1000, backupCount = 5)
+handler.setLevel(INFO)
 filelog.addHandler(handler)
 
 stderr = StreamHandler()
-stderr.setLevel(INFO + 1)
+stderr.setLevel(DEBUG)
 errlog=getLogger('log').addHandler(stderr)
 
 
-debug('debug works')
-info('info works')
-warn('warn works')
-error('error works')
-critical('critical works')
+filelog.debug('debug works')
+filelog.info('info works')
+
+filelog.warn('warn works')
+filelog.error('error works')
+filelog.critical('critical works')
