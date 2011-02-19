@@ -34,13 +34,53 @@ from logging import getLogger
 from logging import DEBUG
 from logging import INFO
 from logging import WARN
+from logging import ERROR
+from logging import CRITICAL
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 from logging import Formatter
-
+from config import get_config
 
 LOGFILE = '/home/nido/.mis/user.log'
 DEBUGLOGFILE = '/home/nido/.mis/debug.log'
+
+LOG = getLogger('mis.log')
+
+STR_LVL = {"debug": DEBUG,
+        "info": INFO,
+        "warn": WARN,
+        "error": ERROR,
+        "critical": CRITICAL}
+
+LVL_STR = dict((v, k) for k, v in STR_LVL.iteritems())
+
+
+def get_loglevel(string):
+    """returns the loglevel belonging to a string"""
+    result = None
+    if STR_LVL.has_key(string):
+        result = STR_LVL[string]
+    else:
+        LOG.warn("loglevel '" + string + "' is unknown")
+    return result
+
+def set_loglevels():
+    """Sets the loglevels as configured (be config file later)"""
+    section = 'loglevels'
+    getLogger('mis.config').setLevel(DEBUG)
+    cfg = get_config()
+    level_config = cfg.list_section(section)
+    if level_config != None:
+        for setting in level_config:
+            value = cfg.get(section, setting)
+            loglevel = get_loglevel(value)
+            if loglevel == None:
+                LOG.error("The config states an illegal loglevel for "
+                        + section)
+            else:
+                LOG.info("setting custom loglevel " +
+                        LVL_STR[loglevel] + " for " + setting)
+                getLogger(setting).setLevel(loglevel)
 
 def init_logging():
     """initialises logging"""
@@ -55,7 +95,7 @@ def init_logging():
     open(DEBUGLOGFILE, 'a').close() 
 
     rootlog = getLogger('mis')
-    rootlog.setLevel(DEBUG)
+    rootlog.setLevel(INFO)
 
     handler = RotatingFileHandler(LOGFILE, maxBytes=10000000, backupCount = 5)
     handler.setLevel(INFO)
@@ -72,5 +112,7 @@ def init_logging():
     stderr.setLevel(WARN)
     rootlog.addHandler(stderr)
 
-    rootlog.info('logging initialised.')
+    set_loglevels()
+
+    LOG.info('logging initialised.')
 # vim: set tabstop=4 expandtab: #
