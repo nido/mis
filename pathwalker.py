@@ -3,7 +3,7 @@ from platform import node
 from os import walk
 from re import compile as regex
 from sys import argv
-from hashlib import sha512
+from hashlib import sha512 # pylint: disable-msg=E0611
 from mysql import insert_into_database
 from mysql import test_if_in_database
 
