@@ -18,55 +18,57 @@ usually contain a title but are not uniquely identifiable by it.
 
 
 container
-	primary properties:
-		streams within container
-	secondary properties:
-		no specifics
+    primary properties:
+        streams within container
+    secondary properties:
+        no specifics
 
 streams:
 --------
 
 Video
-	primary properties:
-		type
-		length (seconds.mmm)
-		framerate
-		aspect ratio
-		width
-		height
-		avg.bitrate
-	secondary properties:
-		language
+    primary properties:
+        type
+        length (seconds.mmm)
+        framerate
+        aspect ratio
+        width
+        height
+        avg.bitrate
+    secondary properties:
+        language
 
 Audio
-	primary properties:
-		type
-		length
-		frequency
-		sample rate (e.g. 8, 16, 24bit)
-		abg.bitrate
-	secondary properties:
-		language
+    primary properties:
+        type
+        length
+        frequency
+        sample rate (e.g. 8, 16, 24bit)
+        abg.bitrate
+    secondary properties:
+        language
 
-		
+        
 subpicture:
-	primary:
-		type
-		length
-		size (bytes)
-	secondary:
-		language
+    primary:
+        type
+        length
+        size (bytes)
+    secondary:
+        language
 
 subtext:
-	primary:
-		type
-		length
-		size (bytes)
-		primary colour
-		secondary colour
-		tertiary colour
-		quaternary colour
-	secondary:
-		language
+    primary:
+        type
+        length
+        size (bytes)
+        primary colour
+        secondary colour
+        tertiary colour
+        quaternary colour
+    secondary:
+        language
 
 """
+
+# vim: set tabstop=4 expandtab: #

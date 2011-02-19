@@ -39,3 +39,4 @@ redundant jbod storage usage/detection
 storage importance settings (unimportant - no redundancy,
 	superimportant - omnipresent redundancy)
 user interface
+configuration of options

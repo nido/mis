@@ -7,11 +7,6 @@ from logging import INFO
 from logging import WARN
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
-from logging import debug
-from logging import info
-from logging import warn
-from logging import error
-from logging import critical
 from logging import Formatter
 
 """log.py is responsible for setting up the mis logging abilities.
@@ -49,30 +44,31 @@ logfile = '/home/nido/.mis/user.log'
 debuglogfile = '/home/nido/.mis/debug.log'
 
 def init_logging():
-	if not isdir('/home/nido/.mis/'):
-		makedirs('/home/nido/.mis/')
+    if not isdir('/home/nido/.mis/'):
+        makedirs('/home/nido/.mis/')
 
-	fileformatter = Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    fileformatter = Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-	#pre-create the log file in order to check its existence.
-	open(logfile, 'a').close() 
-	open(debuglogfile, 'a').close() 
+    #pre-create the log file in order to check its existence.
+    open(logfile, 'a').close() 
+    open(debuglogfile, 'a').close() 
 
-	rootlog = getLogger('mis')
-	rootlog.setLevel(DEBUG)
+    rootlog = getLogger('mis')
+    rootlog.setLevel(DEBUG)
 
-	handler = RotatingFileHandler(logfile, maxBytes=1000, backupCount = 5)
-	handler.setLevel(INFO)
-	rootlog.addHandler(handler)
+    handler = RotatingFileHandler(logfile, maxBytes=10000000, backupCount = 5)
+    handler.setLevel(INFO)
+    rootlog.addHandler(handler)
 
-	handler = RotatingFileHandler(debuglogfile, maxBytes=1000, backupCount = 5)
-	handler.setLevel(DEBUG)
-	handler.setFormatter(fileformatter)
-	rootlog.addHandler(handler)
+    handler = RotatingFileHandler(debuglogfile, maxBytes=10000000, backupCount = 5)
+    handler.setLevel(DEBUG)
+    handler.setFormatter(fileformatter)
+    rootlog.addHandler(handler)
 
-	stderr = StreamHandler()
-	handler.setFormatter(fileformatter)
-	stderr.setLevel(WARN)
-	rootlog.addHandler(stderr)
+    stderr = StreamHandler()
+    handler.setFormatter(fileformatter)
+    stderr.setLevel(WARN)
+    rootlog.addHandler(stderr)
 
-	rootlog.info('logging initialised.');
+    rootlog.info('logging initialised.');
+# vim: set tabstop=4 expandtab: #
