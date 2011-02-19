@@ -10,37 +10,34 @@ from sys import argv
 from hashlib import sha512
 from mysql import insert_into_database
 from mysql import test_if_in_database
+from sys import exit
 
+from log import init_logging
 from logging import getLogger
 from logging import DEBUG
 from logging.handlers import RotatingFileHandler
 
-
-logfile = '/home/nido/.mis/add_media.log'
-
-if not isdir('/home/nido/.mis/'):
-	makedirs('/home/nido/.mis/')
-
-open(logfile, 'a').close() 
-
-log = getLogger('log')
-log.setLevel(DEBUG)
-handler = RotatingFileHandler(logfile, maxBytes=100, backupCount = 5)
-log.addHandler(handler)
+init_logging()
+log = getLogger('mis.add_media')
 
 
-def main():
-	if not len(argv) > 1:
-		print """
+def usage():
+	print """
 Please run this program with as argument the folder you wish to index.
 optionally, give a server name, otherwise, the hostname will be used.
 """
+
+def main():
+	if not len(argv) > 1:
+		log.critical('No path is given, cannot continue')
+		usage()
+		exit(1)
 	
 	walker = pathwalker()	
 	walker.evaluate_path(abspath(argv[1]), pathwalker.add_file);
 
 def get_filter():
-	extensions=['avi', 'mpg', 'mp4', 'mkv', 'ogv', 'flv', 'ogg','mov']
+	extensions=['avi', 'mpg', 'mpeg', 'mp4', 'mkv', 'ogv', 'flv', 'ogg','mov', 'mp3', 'ac3']
 	regexstring = '\.(';
 	for extension in extensions:
 		regexstring = regexstring + extension + '|'
@@ -69,6 +66,6 @@ class pathwalker:
 			sha512sum = sha512(open(filename).read()).hexdigest()
 			insert_into_database(sha512sum, filename, True, this.nodename);
 		else:
-			log.debug("not inserting " + filename)
+			log.debug("already know" + filename + ", ignoring")
 
 main()
