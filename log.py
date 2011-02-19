@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-from os.path import isdir
-from os import makedirs
-from logging import getLogger
-from logging import DEBUG
-from logging import INFO
-from logging import WARN
-from logging import StreamHandler
-from logging.handlers import RotatingFileHandler
-from logging import Formatter
-
 """log.py is responsible for setting up the mis logging abilities.
 
 Logging will be done to a file, and to the command-line. Release
@@ -39,28 +28,41 @@ functionality. Apparently it's pretty handy with that. This also
 means one should be able to logger.getLogger a mis.whatever log and
 start using it. The root log thus obviously is 'mis'.
 """
+from os.path import isdir
+from os import makedirs
+from logging import getLogger
+from logging import DEBUG
+from logging import INFO
+from logging import WARN
+from logging import StreamHandler
+from logging.handlers import RotatingFileHandler
+from logging import Formatter
 
-logfile = '/home/nido/.mis/user.log'
-debuglogfile = '/home/nido/.mis/debug.log'
+
+LOGFILE = '/home/nido/.mis/user.log'
+DEBUGLOGFILE = '/home/nido/.mis/debug.log'
 
 def init_logging():
+    """initialises logging"""
     if not isdir('/home/nido/.mis/'):
         makedirs('/home/nido/.mis/')
 
-    fileformatter = Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    fileformatter = Formatter("%(asctime)s - %(name)s - " + \
+            "%(levelname)s - %(message)s")
 
     #pre-create the log file in order to check its existence.
-    open(logfile, 'a').close() 
-    open(debuglogfile, 'a').close() 
+    open(LOGFILE, 'a').close() 
+    open(DEBUGLOGFILE, 'a').close() 
 
     rootlog = getLogger('mis')
     rootlog.setLevel(DEBUG)
 
-    handler = RotatingFileHandler(logfile, maxBytes=10000000, backupCount = 5)
+    handler = RotatingFileHandler(LOGFILE, maxBytes=10000000, backupCount = 5)
     handler.setLevel(INFO)
     rootlog.addHandler(handler)
 
-    handler = RotatingFileHandler(debuglogfile, maxBytes=10000000, backupCount = 5)
+    handler = RotatingFileHandler(DEBUGLOGFILE, maxBytes=10000000,
+            backupCount = 5)
     handler.setLevel(DEBUG)
     handler.setFormatter(fileformatter)
     rootlog.addHandler(handler)
@@ -70,5 +72,5 @@ def init_logging():
     stderr.setLevel(WARN)
     rootlog.addHandler(stderr)
 
-    rootlog.info('logging initialised.');
+    rootlog.info('logging initialised.')
 # vim: set tabstop=4 expandtab: #
