@@ -6,7 +6,6 @@ from sys import argv
 from os.path import abspath
 from log import init_logging
 from logging import getLogger
-init_logging()
 from pathwalker import Pathwalker
 
 LOG = getLogger('mis.main')
@@ -19,6 +18,7 @@ optionally, give a server name, otherwise, the hostname will be used.
 
 def main():
     """starts the program"""
+    init_logging()
     if not len(argv) > 1:
         LOG.critical('No path is given, cannot continue')
         usage()
