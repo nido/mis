@@ -31,7 +31,6 @@ def save_file(sha, filename, active=True,
         mysql_container_id = 'null'
     else:
         mysql_container_id = str(int(container_id))
-    print active.__str__()
     sql_string = "insert into files (path, sha512, active, " + \
             "node, container) values (" + mysql_filename + ", '" + sha + \
             "', " + active.__str__() + ", " + mysql_node + \
@@ -43,8 +42,37 @@ def save_file(sha, filename, active=True,
         return False
     return True
 
+def find_container_id(streamcount, container_type, duration, size,
+        bitrate):
+    """Finds the key for the container with those specific
+values"""
+    mysql_streamcount = str(int(streamcount))
+    mysql_container_type = CONNECTION.escape(container_type)
+    if duration != None:
+        mysql_duration = str(int(duration))
+    else:
+        mysql_duration = 'null'
+    mysql_size = str(int(size))
+    mysql_bitrate = str(int(bitrate))
+
+    sql_string = "select id from containers where streamcount = " \
+            + mysql_streamcount + " and container_type = " + \
+            mysql_container_type + "and duration_usec = " + \
+            mysql_duration + " and size = " + \
+            mysql_size + " and bitrate = " + \
+            mysql_bitrate + ";"
+
+    cursor = CONNECTION.cursor()
+    results = cursor.execute(sql_string)
+    if results == 0:
+        return None
+    assert (results == 1)
+    return cursor.fetchone()[0]
+
+
 def save_container(streamcount, container_type, duration, size,
         bitrate):
+    """Saves the container in the database"""
     mysql_streamcount = str(int(streamcount))
     mysql_container_type = CONNECTION.escape(container_type)
     if duration != None:
@@ -65,7 +93,10 @@ def save_container(streamcount, container_type, duration, size,
     cursor = CONNECTION.cursor()
     results = cursor.execute(sql_string)
     if results == 0:
-        return False
-    return True
+        return None
+
+    container_id = find_container_id(streamcount, container_type,
+            duration, size, bitrate)
+    return container_id
 
 # vim: set tabstop=4 expandtab textwidth=66: #

@@ -23,13 +23,12 @@ well."""
     def __init__(self, filename, force_probe=False):
         if force_probe == False:
             LOG.warn('database reading not yet supported')
-        self.key = None
         self.streamcount = None
         self.container_type = None
         self.duration = None
         self.size = None
         self.bitrate = None
-        self.ffprobe_init(filename)
+        self.key = self.ffprobe_init(filename)
 
     def database_init(self, filename):
         pass
@@ -67,8 +66,9 @@ well."""
             return
         
 
-        save_container(self.streamcount, self.container_type, 
+        container = save_container(self.streamcount, self.container_type, 
                 self.duration, self.size, self.bitrate)
+        return container
 
         def get_streamcount():
             """ returns the number of streams in the container"""
