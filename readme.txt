@@ -1,6 +1,10 @@
 Media Information System
 ========================
 
+Needed packages:
+- Python
+- Python-MySQL (fedora: MySQL-python)
+
 This is an attempt to make it feasable to handle media libraries
 of ridiculous proportions. Because of that, it uses a library of
 its own asynchronously from the accurate metadata in the file.
