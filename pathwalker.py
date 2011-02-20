@@ -46,7 +46,7 @@ and apply a function to them."""
         """A function which adds a file to the database"""
         if not test_if_in_database(filename):
             LOG.info("inserting " + filename)
-            container = Container(filename)
+            container = Container(filename, force_probe = True)
             sha512sum = sha512(open(filename).read()).hexdigest()
             save_file(sha512sum, filename, active=True,
                     nodename=self.nodename, container_id = 

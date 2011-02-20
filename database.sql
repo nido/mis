@@ -6,9 +6,9 @@ use mis
 create table if not exists containers (
 	id int not null auto_increment, -- many containers may look the same
 	streamcount tinyint not null,
-	container_type char(16) not null, -- what most people would call file type, probably
-	duration_usec mediumint null,
-	size mediumint not null,
+	container_type char(32) not null, -- what most people would call file type, probably
+	duration_usec int null,
+	size int not null,
 	bitrate mediumint not null,
 	comment varchar(255), -- also very common field
 	primary key (id),

@@ -45,7 +45,10 @@ def save_file(sha, filename, active=True,
 def find_container_id(streamcount, container_type, duration, size,
         bitrate):
     """Finds the key for the container with those specific
-values"""
+values. It returns the last added container with these properties.
+This also means the save_container function is NOT thread save and
+can only be executed once at a time no mitigate potential problems
+with this function's behaviour."""
     mysql_streamcount = str(int(streamcount))
     mysql_container_type = CONNECTION.escape(container_type)
     if duration != None:
@@ -60,19 +63,19 @@ values"""
             mysql_container_type + "and duration_usec = " + \
             mysql_duration + " and size = " + \
             mysql_size + " and bitrate = " + \
-            mysql_bitrate + ";"
+            mysql_bitrate + " order by id desc;"
 
     cursor = CONNECTION.cursor()
     results = cursor.execute(sql_string)
     if results == 0:
         return None
-    assert (results == 1)
+    # fetch the highest id (= last addition)
     return cursor.fetchone()[0]
 
 
 def save_container(streamcount, container_type, duration, size,
         bitrate):
-    """Saves the container in the database"""
+    """Saves the container in the database. is not thread safe"""
     mysql_streamcount = str(int(streamcount))
     mysql_container_type = CONNECTION.escape(container_type)
     if duration != None:

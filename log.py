@@ -99,6 +99,7 @@ def init_logging():
 
     handler = RotatingFileHandler(LOGFILE, maxBytes=10000000, backupCount = 5)
     handler.setLevel(INFO)
+    handler.setFormatter(fileformatter)
     rootlog.addHandler(handler)
 
     handler = RotatingFileHandler(DEBUGLOGFILE, maxBytes=10000000,
