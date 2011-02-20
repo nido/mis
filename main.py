@@ -7,8 +7,6 @@ from os.path import abspath
 from log import init_logging
 from logging import getLogger
 from pathwalker import Pathwalker
-from ffprobe import Prober
-from media import Container
 
 LOG = getLogger('mis.main')
 

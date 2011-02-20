@@ -4,7 +4,7 @@ that is, until we decide we want to support other databases."""
 from MySQLdb import connect
 from logging import getLogger
 
-LOG=getLogger('mis.mysql')
+LOG = getLogger('mis.mysql')
 
 CONNECTION = connect(host='localhost', user='mis', passwd='password', db='mis')
 
@@ -56,11 +56,11 @@ def find_container_by_id(container_id):
     return cursor.fetchone()
     
 
-def find_container(node, path):
+def find_container(nodename, path):
     """returns the container id using a path and node id as input. None if
 not found"""
     mysql_path = CONNECTION.escape(path)
-    mysql_node = CONNECTION.escape(node)
+    mysql_node = CONNECTION.escape(nodename)
 
     sql_string = "select container from files where path = " + \
             mysql_path + " and node = " + mysql_node +";"

@@ -14,7 +14,7 @@ from mysql import save_container
 from mysql import find_container
 from ffprobe import Prober
 
-LOG=getLogger('mis.media')
+LOG = getLogger('mis.media')
 
 class Container:
     """A container is an abstraction of the file's container. It
@@ -40,7 +40,7 @@ if unavailable, or otherwise if forced, ffprobe is used."""
 
     def database_init(self, nodename, filename):
         """initialise using the database"""
-        result = find_container(node(), filename)
+        result = find_container(nodename, filename)
         if result == None:
             return False
         self.key = result[0]
@@ -55,56 +55,35 @@ if unavailable, or otherwise if forced, ffprobe is used."""
         """initialise using ffprobe"""
         probe = Prober(filename)
 
-        if probe.raw_container.has_key('nb_streams'):
-            self.streamcount = int(probe.raw_container['nb_streams'])
-        else:
+        if not probe.raw_container.has_key('nb_streams'):
             LOG.error("There's no stream count in the container")
             return
-        if probe.raw_container.has_key('format_name'):
-            self.container_type = probe.raw_container['format_name']
-        else:
+        self.streamcount = int(probe.raw_container['nb_streams'])
+
+        if not probe.raw_container.has_key('format_name'):
             LOG.error("There is no container type defined")
             return
+        self.container_type = probe.raw_container['format_name']
+
         if probe.raw_container.has_key('duration'):
-           self.duration = int(float(
+            self.duration = int(float(
                     probe.raw_container['duration']) * 1000)
         else:
             LOG.warn("no duration found in continer")
             self.duration = None
-        if probe.raw_container.has_key('size'):
-            self.size = int(
-                    probe.raw_container['size'].split('.')[0])
-        else:
+        if not probe.raw_container.has_key('size'):
             LOG.error("There is no size in the container")
             return
-        if probe.raw_container.has_key('bit_rate'):
-            self.bitrate = int(
-                    probe.raw_container['bit_rate'].split('.')[0])
-        else:
+        self.size = int(
+                probe.raw_container['size'].split('.')[0])
+        if not probe.raw_container.has_key('bit_rate'):
             LOG.error("there is no bitrate defined in container")
             return
+        self.bitrate = int(
+                probe.raw_container['bit_rate'].split('.')[0])
         
-
         container = save_container(self.streamcount, self.container_type, 
                 self.duration, self.size, self.bitrate)
         return container
-
-        def get_streamcount():
-            """ returns the number of streams in the container"""
-            return self.streamcount
-
-        def get_type():
-            """ returns the type of container"""
-            return self.container_type
-
-        def get_duration():
-            """ returns the duration in usec"""
-            return self.duration
-
-        print(self.streamcount, self.container_type, 
-                self.duration, self.size, self.bitrate)
         
-
-class Stream:
-    pass
 # vim: set tabstop=4 expandtab textwidth=66: #
