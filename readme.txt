@@ -1,4 +1,5 @@
 Media Information System
+========================
 
 This is an attempt to make it feasable to handle media libraries
 of ridiculous proportions. Because of that, it uses a library of
@@ -24,6 +25,26 @@ deactivated rather then the entry removed once the file is
 unavailable or replaced with another copy (given the sha1 hash).
 development is underway to allow redundancy of files or media
 over different sites.
+
+configuration
+=============
+configuration is done in two places. By hand in /etc/mis.conf, and
+semi-automagically in ~/.mis/config. configuration files are done
+using the configparser from python. This means we have .ini like config
+files. These have sections, signified by the [] (e.g. [section_name]); and
+options ("key = value" pairs). 
+
+current configurable options are:
+[loglevels]
+name_of_log = loglevel
+
+name_of_log as defined by the log. This should follow the
+configuration 'mis.filename'. e.g. 'mis.pathwalker'
+valid loglevel options are from least to most severe: 'debug', 'info', 'warn',
+'error', 'critical'. Setting the log level ensures only logs from that level and higher
+are logged. By default, only INFO and higher is considered for logging (including the debug log)
+
+
 
 general list of todo stuff
 
