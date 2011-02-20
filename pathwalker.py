@@ -4,7 +4,7 @@ from os import walk
 from re import compile as regex
 from sys import argv
 from hashlib import sha512 # pylint: disable-msg=E0611
-from mysql import insert_into_database
+from mysql import save_file
 from mysql import test_if_in_database
 
 from logging import getLogger
@@ -46,7 +46,7 @@ and apply a function to them."""
         if not test_if_in_database(filename):
             LOG.info("inserting " + filename)
             sha512sum = sha512(open(filename).read()).hexdigest()
-            insert_into_database(sha512sum, filename, True,
+            save_file(sha512sum, filename, True,
                     self.nodename)
         else:
             LOG.debug("already know" + filename + ", ignoring")
