@@ -8,8 +8,10 @@ data. The file may also be a video container containing only
 audio. In that case, it is not a video file but an audio file.
 
 """
+from platform import node
 from logging import getLogger
 from mysql import save_container
+from mysql import find_container
 from ffprobe import Prober
 
 LOG=getLogger('mis.media')
@@ -21,19 +23,36 @@ the database and can save information to MIS from raw_containers as
 well."""
     
     def __init__(self, filename, force_probe=False):
-        if force_probe == False:
-            LOG.warn('database reading not yet supported')
+        """initialises a container, firstly, through the database,
+if unavailable, or otherwise if forced, ffprobe is used."""
+        self.key = None
         self.streamcount = None
         self.container_type = None
         self.duration = None
         self.size = None
         self.bitrate = None
+        if force_probe == False:
+            done = self.database_init(node(), filename)
+            if done == True:
+                return
+            # fall back to ffprobe
         self.key = self.ffprobe_init(filename)
 
-    def database_init(self, filename):
-        pass
+    def database_init(self, nodename, filename):
+        """initialise using the database"""
+        result = find_container(node(), filename)
+        if result == None:
+            return False
+        self.key = result[0]
+        self.streamcount = result[1]
+        self.container_type = result[2]
+        self.duration = result[3]
+        self.size = result[4]
+        self.bitrate = result[5]
+        return True
 
     def ffprobe_init(self, filename):
+        """initialise using ffprobe"""
         probe = Prober(filename)
 
         if probe.raw_container.has_key('nb_streams'):

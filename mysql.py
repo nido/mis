@@ -42,6 +42,38 @@ def save_file(sha, filename, active=True,
         return False
     return True
 
+def find_container_by_id(container_id):
+    """returns a list of container properties"""
+    mysql_container_id = str(int(container_id))
+    sql_string = "select * from containers where id = " + \
+            mysql_container_id + ";"
+    LOG.debug(sql_string)
+    cursor = CONNECTION.cursor()
+    result = cursor.execute(sql_string)
+    if result == 0:
+        return None
+    assert(result == 1)
+    return cursor.fetchone()
+    
+
+def find_container(node, path):
+    """returns the container id using a path and node id as input. None if
+not found"""
+    mysql_path = CONNECTION.escape(path)
+    mysql_node = CONNECTION.escape(node)
+
+    sql_string = "select container from files where path = " + \
+            mysql_path + " and node = " + mysql_node +";"
+    LOG.debug(sql_string)
+    cursor = CONNECTION.cursor()
+    result = cursor.execute(sql_string)
+    if result == 0:
+        return None
+    assert(result == 1)
+    container_id = cursor.fetchone()[0]
+    return find_container_by_id(container_id)
+    
+
 def find_container_id(streamcount, container_type, duration, size,
         bitrate):
     """Finds the key for the container with those specific
@@ -71,7 +103,6 @@ with this function's behaviour."""
         return None
     # fetch the highest id (= last addition)
     return cursor.fetchone()[0]
-
 
 def save_container(streamcount, container_type, duration, size,
         bitrate):
