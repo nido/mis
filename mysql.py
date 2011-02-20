@@ -23,13 +23,20 @@ def test_if_in_database(filename):
     return True
 
 def save_file(sha, filename, active=True,
-        nodename=node()):
+        nodename=node(), container_id = None):
     """Inserts a data tuple into the database"""
     mysql_filename = CONNECTION.escape(filename)
     mysql_node = CONNECTION.escape(nodename)
+    if container_id == None:
+        mysql_container_id = 'null'
+    else:
+        mysql_container_id = str(int(container_id))
+    print active.__str__()
     sql_string = "insert into files (path, sha512, active, " + \
-            "node) values (" + mysql_filename + ", '" + sha + \
-            "', " + active.__str__() + ", " + mysql_node + ");"
+            "node, container) values (" + mysql_filename + ", '" + sha + \
+            "', " + active.__str__() + ", " + mysql_node + \
+            ", " + mysql_container_id + ");"
+    LOG.debug(sql_string)
     cursor = CONNECTION.cursor()
     results = cursor.execute(sql_string)
     if results == 0:

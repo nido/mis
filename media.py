@@ -23,6 +23,18 @@ well."""
     def __init__(self, filename, force_probe=False):
         if force_probe == False:
             LOG.warn('database reading not yet supported')
+        self.key = None
+        self.streamcount = None
+        self.container_type = None
+        self.duration = None
+        self.size = None
+        self.bitrate = None
+        self.ffprobe_init(filename)
+
+    def database_init(self, filename):
+        pass
+
+    def ffprobe_init(self, filename):
         probe = Prober(filename)
 
         if probe.raw_container.has_key('nb_streams'):
@@ -57,6 +69,18 @@ well."""
 
         save_container(self.streamcount, self.container_type, 
                 self.duration, self.size, self.bitrate)
+
+        def get_streamcount():
+            """ returns the number of streams in the container"""
+            return self.streamcount
+
+        def get_type():
+            """ returns the type of container"""
+            return self.container_type
+
+        def get_duration():
+            """ returns the duration in usec"""
+            return self.duration
 
         print(self.streamcount, self.container_type, 
                 self.duration, self.size, self.bitrate)

@@ -46,8 +46,8 @@ and apply a function to them."""
         if not test_if_in_database(filename):
             LOG.info("inserting " + filename)
             sha512sum = sha512(open(filename).read()).hexdigest()
-            save_file(sha512sum, filename, True,
-                    self.nodename)
+            save_file(sha512sum, filename, active=True,
+                    nodename=self.nodename)
         else:
             LOG.debug("already know" + filename + ", ignoring")
 
