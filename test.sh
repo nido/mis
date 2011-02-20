@@ -7,7 +7,7 @@ function exists(){
 function analyser(){
 	if ! exists $1
 	then
-		echo "you should install pyflakes, or put it in your path"
+		echo "you should install $1, or put it in your path"
 	else
 		echo "analyser $1"
 		$1 $2 *.py
