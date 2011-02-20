@@ -17,6 +17,39 @@ streams within them. containers contain multiple streams. They
 usually contain a title but are not uniquely identifiable by it.
 
 
+Okay. Back to reality. The container kinda meta-is the media. it
+contains info we want
+
+file
+ +--container
+    +--properties
+    |   title
+    |   year
+    |   container_type
+    |   media_type
+    |   duration
+    |   comment
+    +--video streams
+    |   codec
+    |   width
+    |   height
+    |   framerate
+    |   bitrate
+    +--audio streams
+    |   codec
+    |   channels
+    |   samlerate
+    |   bitrate
+    +--txt streams
+    |   format
+    +--picture streams
+    |   format
+    |   colours (TODO: expand)
+    +--aux streams (are these interesting enough?
+
+
+
+
 container
     primary properties:
         streams within container
