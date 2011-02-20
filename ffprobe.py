@@ -23,8 +23,6 @@ class Prober:
         self.raw_container = None
         self.raw_streams = None
         self.parse()
-        print self.raw_container
-        print self.raw_streams
 
 
     def process_file(self):
