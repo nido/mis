@@ -6,9 +6,12 @@ from sys import argv
 from os.path import abspath
 from log import init_logging
 from logging import getLogger
-from pathwalker import Pathwalker
+#from pathwalker import Pathwalker
+from ffprobe import Prober
+from media import Container
 
 LOG = getLogger('mis.main')
+
 def usage():
     """echos how to use this executable"""
     print """
@@ -19,13 +22,16 @@ optionally, give a server name, otherwise, the hostname will be used.
 def main():
     """starts the program"""
     init_logging()
+
+    test = Container(argv[1])
+
     if not len(argv) > 1:
         LOG.critical('No path is given, cannot continue')
         usage()
         exit(1)
     
-    walker = Pathwalker()   
-    walker.evaluate_path(abspath(argv[1]), Pathwalker.add_file)
+    #walker = Pathwalker()   
+    #walker.evaluate_path(abspath(argv[1]), Pathwalker.add_file)
 
 main()
 

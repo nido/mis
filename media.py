@@ -7,101 +7,61 @@ assume there is a 'primary' video stream of which we will use the
 data. The file may also be a video container containing only
 audio. In that case, it is not a video file but an audio file.
 
-containers:
------------
-
-containers are the part of the file which holds it all together.
-they coordinate the interleave between video and audio frames,
-contain general information and usually also information about the
-streams within them. containers contain multiple streams. They
-usually contain a title but are not uniquely identifiable by it.
-
-
-Okay. Back to reality. The container kinda meta-is the media. it
-contains info we want
-
-file
- +--container
-    +--properties
-    |   title
-    |   year
-    |   container_type
-    |   media_type
-    |   duration
-    |   comment
-    +--video streams
-    |   codec
-    |   width
-    |   height
-    |   framerate
-    |   bitrate
-    +--audio streams
-    |   codec
-    |   channels
-    |   samlerate
-    |   bitrate
-    +--txt streams
-    |   format
-    +--picture streams
-    |   format
-    |   colours (TODO: expand)
-    +--aux streams (are these interesting enough?
-
-
-
-
-container
-    primary properties:
-        streams within container
-    secondary properties:
-        no specifics
-
-streams:
---------
-
-Video
-    primary properties:
-        type
-        length (seconds.mmm)
-        framerate
-        aspect ratio
-        width
-        height
-        avg.bitrate
-    secondary properties:
-        language
-
-Audio
-    primary properties:
-        type
-        length
-        frequency
-        sample rate (e.g. 8, 16, 24bit)
-        abg.bitrate
-    secondary properties:
-        language
-
-        
-subpicture:
-    primary:
-        type
-        length
-        size (bytes)
-    secondary:
-        language
-
-subtext:
-    primary:
-        type
-        length
-        size (bytes)
-        primary colour
-        secondary colour
-        tertiary colour
-        quaternary colour
-    secondary:
-        language
-
 """
+from logging import getLogger
+from mysql import save_container
+from ffprobe import Prober
 
-# vim: set tabstop=4 expandtab: #
+LOG=getLogger('mis.media')
+
+class Container:
+    """A container is an abstraction of the file's container. It
+can pull information from raw_containers from ffprobes and from
+the database and can save information to MIS from raw_containers as
+well."""
+    
+    def __init__(self, filename, force_probe=False):
+        if force_probe == False:
+            LOG.warn('database reading not yet supported')
+        probe = Prober(filename)
+
+        if probe.raw_container.has_key('nb_streams'):
+            self.streamcount = int(probe.raw_container['nb_streams'])
+        else:
+            LOG.error("There's no stream count in the container")
+            return
+        if probe.raw_container.has_key('format_name'):
+            self.container_type = probe.raw_container['format_name']
+        else:
+            LOG.error("There is no container type defined")
+            return
+        if probe.raw_container.has_key('duration'):
+           self.duration = int(float(
+                    probe.raw_container['duration']) * 1000)
+        else:
+            LOG.warn("no duration found in continer")
+            self.duration = None
+        if probe.raw_container.has_key('size'):
+            self.size = int(
+                    probe.raw_container['size'].split('.')[0])
+        else:
+            LOG.error("There is no size in the container")
+            return
+        if probe.raw_container.has_key('bit_rate'):
+            self.bitrate = int(
+                    probe.raw_container['bit_rate'].split('.')[0])
+        else:
+            LOG.error("there is no bitrate defined in container")
+            return
+        
+
+        save_container(self.streamcount, self.container_type, 
+                self.duration, self.size, self.bitrate)
+
+        print(self.streamcount, self.container_type, 
+                self.duration, self.size, self.bitrate)
+        
+
+class Stream:
+    pass
+# vim: set tabstop=4 expandtab textwidth=66: #
