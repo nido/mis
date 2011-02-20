@@ -48,7 +48,7 @@ are logged. By default, only INFO and higher is considered for logging (includin
 
 general list of todo stuff
 
-clean up extensions business (a.k.a. grab superiour list).
+clean up file extensions business (a.k.a. grab superiour list).
 collections (of one episode, series, series of series, universes)
 media/file/filetype/media-specifics recogniser.
 `watched' list
@@ -60,4 +60,3 @@ redundant jbod storage usage/detection
 storage importance settings (unimportant - no redundancy,
 	superimportant - omnipresent redundancy)
 user interface
-configuration of options
