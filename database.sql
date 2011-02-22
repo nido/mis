@@ -10,7 +10,6 @@ create table if not exists containers (
 	duration_usec int null,
 	size int not null,
 	bitrate mediumint not null,
-	comment varchar(255), -- also very common field
 	primary key (id),
 	index (duration_usec)
 );
