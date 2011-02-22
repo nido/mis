@@ -24,6 +24,28 @@ def get_config():
         SINGLETON = Configuration()
     return SINGLETON
 
+
+def default_config():
+    """default config() returns the default configuration. This
+function is defined in order to keep the configuration default in
+one place for annotation, and also to keep the rest of the program
+blissfully ignorant of the defaultness of said configuration."""
+    config = SafeConfigParser()
+    # Default configurtion settings for the MySQL server
+    config.add_section('mysql')
+    config.set('mysql', 'host', 'localhost')
+    config.set('mysql', 'user', 'mis')
+    config.set('mysql', 'password', 'password')
+    config.set('mysql', 'database', 'mis')
+    # Default settings for the debug/developent database
+    config.add_section('mysql_debug')
+    config.set('mysql_debug', 'host', 'localhost')
+    config.set('mysql_debug', 'user', 'mis')
+    config.set('mysql_debug', 'password', 'password')
+    config.set('mysql_debug', 'database', 'mis_test')
+
+    return config
+
 class Configuration():
     """the configuration itself, dictionary like. We'll be using
 python's very own ConfigParser."""
@@ -32,7 +54,7 @@ python's very own ConfigParser."""
 
     def __init__(self):
         """initialises the configurations"""
-        self.parser = SafeConfigParser()
+        self.parser = default_config()
         self.read = self.parser.read([self.system_file, self.user_filename])
         self.userconfig = SafeConfigParser()
         self.userconfig.read([self.user_filename])

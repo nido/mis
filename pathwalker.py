@@ -5,7 +5,7 @@ from re import compile as regex
 from sys import argv
 from hashlib import sha512 # pylint: disable-msg=E0611
 from mysql import save_file
-from mysql import test_if_in_database
+from mysql import file_exists
 from media import Container
 
 from logging import getLogger
@@ -44,7 +44,7 @@ and apply a function to them."""
             
     def add_file(self, filename):
         """A function which adds a file to the database"""
-        if not test_if_in_database(filename):
+        if not file_exists(filename):
             LOG.info("inserting " + filename)
             container = Container(filename)
             sha512sum = sha512(open(filename).read()).hexdigest()

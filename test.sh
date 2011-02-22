@@ -16,6 +16,10 @@ function analyser(){
 
 }
 
+for x in test_*.py; do
+	python $x
+done
+
 analyser pylint "-r n"
 analyser epylint
 analyser pyflakes

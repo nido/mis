@@ -4,18 +4,32 @@ that is, until we decide we want to support other databases."""
 from MySQLdb import connect
 from logging import getLogger
 
-LOG = getLogger('mis.mysql')
-
-CONNECTION = connect(host='localhost', user='mis', passwd='password', db='mis')
-
+from config import get_config
 from platform import node
 
-def test_if_in_database(filename):
+LOG = getLogger('mis.mysql')
+
+CONNECTION = None
+
+def get_connection():
+    """returns the connection"""
+    global CONNECTION # pylint: disable-msg=W0603
+    if CONNECTION == None:
+        CONNECTION = connect(
+                host=get_config().get('mysql', 'host'),
+                user=get_config().get('mysql', 'user'),
+                passwd=get_config().get('mysql', 'password'),
+                db=get_config().get('mysql', 'database')
+        )
+    return CONNECTION
+
+
+def file_exists(filename):
     """Tests if the filename is known in the database"""
-    mysql_filename = CONNECTION.escape(filename)
+    mysql_filename = get_connection().escape(filename)
     mysql_string = "select active from files where path = " + \
             mysql_filename + ";"
-    cursor = CONNECTION.cursor()
+    cursor = get_connection().cursor()
     results = cursor.execute(mysql_string)
     cursor.close()
     if results == 0:
@@ -25,8 +39,8 @@ def test_if_in_database(filename):
 def save_file(sha, filename, active=True,
         nodename=node(), container_id = None):
     """Inserts a data tuple into the database"""
-    mysql_filename = CONNECTION.escape(filename)
-    mysql_node = CONNECTION.escape(nodename)
+    mysql_filename = get_connection().escape(filename)
+    mysql_node = get_connection().escape(nodename)
     if container_id == None:
         mysql_container_id = 'null'
     else:
@@ -36,7 +50,7 @@ def save_file(sha, filename, active=True,
             "', " + active.__str__() + ", " + mysql_node + \
             ", " + mysql_container_id + ");"
     LOG.debug(sql_string)
-    cursor = CONNECTION.cursor()
+    cursor = get_connection().cursor()
     results = cursor.execute(sql_string)
     if results == 0:
         return False
@@ -48,7 +62,7 @@ def find_container_by_id(container_id):
     sql_string = "select * from containers where id = " + \
             mysql_container_id + ";"
     LOG.debug(sql_string)
-    cursor = CONNECTION.cursor()
+    cursor = get_connection().cursor()
     result = cursor.execute(sql_string)
     if result == 0:
         return None
@@ -59,13 +73,13 @@ def find_container_by_id(container_id):
 def find_container(nodename, path):
     """returns the container id using a path and node id as input. None if
 not found"""
-    mysql_path = CONNECTION.escape(path)
-    mysql_node = CONNECTION.escape(nodename)
+    mysql_path = get_connection().escape(path)
+    mysql_node = get_connection().escape(nodename)
 
     sql_string = "select container from files where path = " + \
             mysql_path + " and node = " + mysql_node +";"
     LOG.debug(sql_string)
-    cursor = CONNECTION.cursor()
+    cursor = get_connection().cursor()
     result = cursor.execute(sql_string)
     if result == 0:
         return None
@@ -82,7 +96,7 @@ This also means the save_container function is NOT thread save and
 can only be executed once at a time no mitigate potential problems
 with this function's behaviour."""
     mysql_streamcount = str(int(streamcount))
-    mysql_container_type = CONNECTION.escape(container_type)
+    mysql_container_type = get_connection().escape(container_type)
     if duration != None:
         mysql_duration = str(int(duration))
     else:
@@ -97,7 +111,7 @@ with this function's behaviour."""
             mysql_size + " and bitrate = " + \
             mysql_bitrate + " order by id desc;"
 
-    cursor = CONNECTION.cursor()
+    cursor = get_connection().cursor()
     results = cursor.execute(sql_string)
     if results == 0:
         return None
@@ -108,7 +122,7 @@ def save_container(streamcount, container_type, duration, size,
         bitrate):
     """Saves the container in the database. is not thread safe"""
     mysql_streamcount = str(int(streamcount))
-    mysql_container_type = CONNECTION.escape(container_type)
+    mysql_container_type = get_connection().escape(container_type)
     if duration != None:
         mysql_duration = str(int(duration))
     else:
@@ -124,7 +138,7 @@ def save_container(streamcount, container_type, duration, size,
 
     LOG.debug(sql_string)
 
-    cursor = CONNECTION.cursor()
+    cursor = get_connection().cursor()
     results = cursor.execute(sql_string)
     if results == 0:
         return None
