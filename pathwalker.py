@@ -40,6 +40,7 @@ and apply a function to them."""
         for item in walker:
             for filename in item[2]:
                 if(finder(filename)):
+                    # TODO: use that separator thingie
                     method(self, item[0] + '/' + filename)
             
     def add_file(self, filename):
