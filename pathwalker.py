@@ -54,4 +54,4 @@ and apply a function to them."""
         else:
             LOG.debug("already know" + filename + ", ignoring")
 
-# vim: set tabstop=4 expandtab: #
+# vim: set tabstop=4 expandtab textwidth=66: #
