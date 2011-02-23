@@ -1,4 +1,8 @@
 #!/bin/bash
+# This little program has the responsibility to run any test on
+# the code it is able to run. This currently includes pylint,
+# pyflakes, epylint and unit tests, however, this is to be
+# extended with any other test methods known by anyone.
 
 function exists(){
 	test -f "`which $1 2>/dev/null`"
@@ -23,3 +27,4 @@ done
 analyser pylint "-r n"
 analyser epylint
 analyser pyflakes
+# vim: set tabstop=4 expandtab textwidth=66: #
