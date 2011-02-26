@@ -19,22 +19,22 @@ peers and to secure the connection."""
 
     def __init__(self):
         config = get_config()
-        host = config.get('network', 'host')
-        port = int(config.get('network', 'port'))
-        s = socket(AF_INET, SOCK_STREAM )
-        s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        LOG.debug('started socket on "' + str(host) + '" port "' +
-                str(port) + '". binding')
-        s.bind((host, port))
+        self.host = config.get('network', 'host')
+        self.port = int(config.get('network', 'port'))
+        self.socket = socket(AF_INET, SOCK_STREAM)
+        self.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        LOG.debug('started socket on "' + str(self.host) + '" port "' +
+                str(self.port) + '". binding')
+        self.socket.bind((self.host, self.port))
         LOG.debug('bind complete, listen(1)ing')
-        s.listen(0)
+        self.socket.listen(1)
         LOG.debug('accepting')
-        conn, addr = s.accept()
+        conn, addr = self.socket.accept()
         LOG.info('Got a connection from ' + str(addr))
-        bla = server_handler(conn,addr)
+        ServerHandler(conn, addr)
 
 
-class server_handler:
+class ServerHandler:
     """The handler is given a socket to which to talk to another
 client and exchange information and data."""
     def __init__(self, conn, addr):
@@ -46,7 +46,7 @@ client and exchange information and data."""
         while True:
             # "we're logging; 80 chars a time"
             bla = conn.recv(80)
-            getLogger('mis.network.server_handler.traffic').debug(bla)
+            getLogger('mis.network.Server_handler.traffic').debug(bla)
             
         print bla
         print "done"
