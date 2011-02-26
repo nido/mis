@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """main is basically the executable you'd run"""
 
-
 from sys import argv
 from os.path import abspath
 from log import init_logging
@@ -22,6 +21,9 @@ def main():
     init_logging()
 
     #test = Container(argv[1])
+    from network import Daemon
+    test = Daemon()
+    exit(1)
 
     if not len(argv) > 1:
         LOG.critical('No path is given, cannot continue')

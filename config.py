@@ -43,6 +43,10 @@ blissfully ignorant of the defaultness of said configuration."""
     config.set('mysql_debug', 'user', 'mis')
     config.set('mysql_debug', 'password', 'password')
     config.set('mysql_debug', 'database', 'mis_test')
+    # network settings
+    config.add_section('network')
+    config.set('network', 'host', '')
+    config.set('network', 'port', '55433')
 
     return config
 
@@ -54,8 +58,8 @@ python's very own ConfigParser."""
 
     def __init__(self):
         """initialises the configurations"""
-        self.parser = default_config()
-        self.read = self.parser.read([self.system_file, self.user_filename])
+        self._parser = default_config()
+        self.read = self._parser.read([self.system_file, self.user_filename])
         self.userconfig = SafeConfigParser()
         self.userconfig.read([self.user_filename])
         LOG.info("Configuration initialised")
@@ -63,8 +67,8 @@ python's very own ConfigParser."""
     def list_section(self, section):
         """returns the entries in a section"""
         result = None
-        if self.parser.has_section(section):
-            result = self.parser.options(section)
+        if self._parser.has_section(section):
+            result = self._parser.options(section)
         else:
             LOG.debug("cannot log section " + section + 
                     ", it doesn't exist.")
@@ -74,7 +78,7 @@ python's very own ConfigParser."""
         """gets a configuration option"""
         result = None
         try:
-            result = self.parser.get(section, name)
+            result = self._parser.get(section, name)
         except NoSectionError:
             LOG.warn("Section " + section + " doesn't exist.")
         return result
@@ -82,9 +86,9 @@ python's very own ConfigParser."""
 
     def set(self, section, name, value, permanent=False):
         """sets a configuration option"""
-        if (not self.parser.has_section(section)):
-            self.parser.add_section(section)
-        self.parser.set(section, name, value)
+        if (not self._parser.has_section(section)):
+            self._parser.add_section(section)
+        self._parser.set(section, name, value)
         if(permanent):
             if (not self.userconfig.has_section(section)):
                 self.userconfig.add_section(section)
