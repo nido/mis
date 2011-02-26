@@ -31,15 +31,23 @@ peers and to secure the connection."""
         LOG.debug('accepting')
         conn, addr = s.accept()
         LOG.info('Got a connection from ' + str(addr))
-        bla = handler(conn,addr)
+        bla = server_handler(conn,addr)
 
 
-class handler:
+class server_handler:
     """The handler is given a socket to which to talk to another
 client and exchange information and data."""
     def __init__(self, conn, addr):
-        print conn, addr
-        bla = conn.recv(1024)
+        """initiates a server process"""
+        self.connection = conn
+        self.address = addr
+        # let's keep it simple for now and just grab and print
+        # everything
+        while True:
+            # "we're logging; 80 chars a time"
+            bla = conn.recv(80)
+            getLogger('mis.network.server_handler.traffic').debug(bla)
+            
         print bla
         print "done"
 
