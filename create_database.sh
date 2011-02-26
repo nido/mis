@@ -18,6 +18,7 @@ create table if not exists containers (
 	bitrate mediumint not null,
 	primary key (id),
 	index (duration_usec)
+	last_modified timestamp default current_timestamp on update current_timestamp
 );
 
 create table if not exists files (
@@ -32,6 +33,7 @@ create table if not exists files (
 	foreign key (container) references containers(id) ON DELETE set null,
 	fulltext index (path),
 	index (node)
+	last_modified timestamp default current_timestamp on update current_timestamp
 );
 
 create table if not exists video_streams (
@@ -48,6 +50,7 @@ create table if not exists video_streams (
 	primary key(id),
 	foreign key (container) references containers(id) on delete cascade,
 	index (duration_usec)
+	last_modified timestamp default current_timestamp on update current_timestamp
 );
 
 create table if not exists audio_streams (
@@ -61,6 +64,7 @@ create table if not exists audio_streams (
 	primary key (id),
 	foreign key (container) references containers(id) on delete cascade,
 	index (duration_usec)
+	last_modified timestamp default current_timestamp on update current_timestamp
 );
 EOF`
 
