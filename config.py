@@ -47,6 +47,17 @@ blissfully ignorant of the defaultness of said configuration."""
     config.add_section('network')
     config.set('network', 'host', '')
     config.set('network', 'port', '55433')
+    # default loglevels
+    config.add_section('loglevels')
+    config.set('mis.config', 'info')
+    config.set('mis.ffprobe', 'info')
+    config.set('mis.log', 'info')
+    config.set('mis.main', 'info')
+    config.set('mis.media', 'info')
+    config.set('mis.mysql', 'info')
+    config.set('mis.network', 'info')
+    config.set('mis.network.Server_handler.traffic', 'info')
+    config.set('mis.pathwalker', 'info')
 
     return config
 

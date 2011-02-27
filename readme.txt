@@ -38,9 +38,7 @@ using the configparser from python. This means we have .ini like config
 files. These have sections, signified by the [] (e.g. [section_name]); and
 options ("key = value" pairs). 
 
-current configurable options are:
-[loglevels]
-name_of_log = loglevel
+current configurable options are described in the default config at config.py
 
 name_of_log as defined by the log. This should follow the
 configuration 'mis.filename'. e.g. 'mis.pathwalker'
