@@ -54,17 +54,16 @@ general list of todo stuff
 ==========================
 
 integration:
-    database configuration
     unittests
 
 cleanup:
-    media/file/filetype/media-specifics recogniser.
+    media-specifics recogniser.
     clean up file extensions business (a.k.a. grab superiour list).
 
 extensions:
     collections (of one episode, series, series of series, universes)
     `watched' list
-    double file checker
+    double signature checker
     connect to external instance
         up/download files
     talk to the admin (missing/double files, other problems)

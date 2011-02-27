@@ -23,6 +23,23 @@ def _get_connection():
         )
     return CONNECTION
 
+def doubles():
+    """find double files (with the same hashes)"""
+    mysql_string = ('select a.sha512, a.path from files as a, ' +
+            'files as b where a.sha512 = b.sha512 and a.id != ' +
+            'b.id and a.active = True and b.active = True order' +
+            ' by a.sha512;')
+
+    cursor = _get_connection().cursor()
+    result = cursor.execute(mysql_string)
+    if result == 0:
+        result = None
+    else:
+        result = cursor.fetchall()
+
+    cursor.close()
+    return result
+
 
 def file_exists(filename):
     """Tests if the filename is known in the database"""
