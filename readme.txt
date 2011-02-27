@@ -32,8 +32,13 @@ over different sites.
 
 configuration
 =============
-configuration is done in two places. By hand in /etc/mis.conf, and
-semi-automagically in ~/.mis/config. configuration files are done
+configuration is saved in three places. The (complete) default configuration
+is set up and saved in-code. /etc/mis.conf is read as system wide setting, and
+~/.mis/config is read as user settings. Keep in mind, system  config always takes
+precedence over default config and user config always takes precedense over system
+config. All entries are included to the config, even if they seem nonsensical.
+
+Configuration files are done
 using the configparser from python. This means we have .ini like config
 files. These have sections, signified by the [] (e.g. [section_name]); and
 options ("key = value" pairs). 
