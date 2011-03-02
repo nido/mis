@@ -49,15 +49,15 @@ blissfully ignorant of the defaultness of said configuration."""
     config.set('network', 'port', '55433')
     # default loglevels
     config.add_section('loglevels')
-    config.set('mis.config', 'info')
-    config.set('mis.ffprobe', 'info')
-    config.set('mis.log', 'info')
-    config.set('mis.main', 'info')
-    config.set('mis.media', 'info')
-    config.set('mis.mysql', 'info')
-    config.set('mis.network', 'info')
-    config.set('mis.network.Server_handler.traffic', 'info')
-    config.set('mis.pathwalker', 'info')
+    config.set('loglevels', 'mis.config', 'info')
+    config.set('loglevels', 'mis.ffprobe', 'info')
+    config.set('loglevels', 'mis.log', 'info')
+    config.set('loglevels', 'mis.main', 'info')
+    config.set('loglevels', 'mis.media', 'info')
+    config.set('loglevels', 'mis.mysql', 'info')
+    config.set('loglevels', 'mis.network', 'info')
+    config.set('loglevels', 'mis.network.Server_handler.traffic', 'info')
+    config.set('loglevels', 'mis.pathwalker', 'info')
 
     return config
 
