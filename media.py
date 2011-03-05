@@ -24,7 +24,7 @@ well."""
     
     def __init__(self, filename, force_probe=False):
         """initialises a container, firstly, through the database,
-if unavailable, or otherwise if forced, ffprobe is used."""
+        if unavailable, or otherwise if forced, ffprobe is used."""
         self.key = None
         self.streamcount = None
         self.container_type = None

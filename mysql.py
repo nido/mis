@@ -29,9 +29,11 @@ def doubles():
             'files as b where a.sha512 = b.sha512 and a.id != ' +
             'b.id and a.active = True and b.active = True order' +
             ' by a.sha512;')
+    statement  = 'prepare doubles from "' + mysql_string + '";'
 
     cursor = _get_connection().cursor()
     result = cursor.execute(mysql_string)
+    result = cursor.execute('execute doubles;')
     if result == 0:
         result = None
     else:
