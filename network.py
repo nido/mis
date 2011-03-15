@@ -53,26 +53,26 @@ from logging import getLogger
 
 LOG = getLogger('mis.network')
 
-def intb4(x):
+def intb4(integer):
     """Turns a number into a 32bit byte array"""
-    z=bytearray()
-    for y in [3,2,1,0]:
-        z.append((x / (256**y)) % 256)
-    return z
+    byte_array = bytearray()
+    for i in [3, 2, 1, 0]:
+        byte_array.append((integer / (256**i)) % 256)
+    return byte_array
 
-def b4int(x):
+def b4int(byte_array):
     """Turns a 32bit byte array into a number"""
-    z=0
-    for y in (0,1,2,3):
-        z = z + x[3-y]*(256**y)
-    return z
+    integer = 0
+    for i in (0, 1, 2, 3):
+        integer = integer + byte_array[3-i]*(256**i)
+    return integer
 
 
 class Connection:
     """Responsible for the connection. Actual network stuff rather
     then the improvised protocol."""
-    def __init__(self, socket, addr=None):
-        self.socket = socket
+    def __init__(self, socket_, addr=None):
+        self.socket = socket_
         self.remote_address = addr
 
     def send(self, data):
@@ -82,8 +82,12 @@ class Connection:
         # we send and receive packets.
         packet = bytearray()
         # Let's just add a size argument for now
-        packet += intb4(len(data)+4)
+        packet += intb4(len(data)+8)
+        # and a transaction number
+        packet += intb4(randint(0, 2**32 - 1))
         packet += bytearray(data)
+        LOG.debug('sent transaction ' + 
+                str(b4int(packet[4:8])))
         return self.socket.sendall(packet)
 
     def recv(self):
@@ -93,7 +97,9 @@ class Connection:
         packet = bytearray(packet)
         packet_size = b4int(packet)
         packet = packet + bytearray(self.socket.recv(packet_size))
-        return packet[4:]
+        LOG.debug('received transaction ' +
+                str(b4int(packet[4:8])))
+        return packet[8:]
     
     
 class TCPServer:
@@ -138,9 +144,10 @@ class TCPClient:
         try:
             self.socket.connect((self.host, self.port))
             return Connection(self.socket, self.host)
-        except:
-            LOG.critical("Connection refused to " + self.host + ":"
+        except error:
+            LOG.info("Connection refused to " + self.host + ":"
                     + str(self.port))
+            LOG.info(error)
             return None
 
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #

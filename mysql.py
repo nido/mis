@@ -5,11 +5,11 @@ from logging import getLogger
 
 try:
     from MySQLdb import connect
-except:
+except ImportError:
     from log import init_logging
     init_logging()
-    log = getLogger('mis.mysql')
-    log.critical("MySQL-python is required for this program to"
+    LOG = getLogger('mis.mysql')
+    LOG.critical("MySQL-python is required for this program to"
             " work")
     exit(1)
 
@@ -41,7 +41,7 @@ def doubles():
     statement  = 'prepare doubles from "' + mysql_string + '";'
 
     cursor = _get_connection().cursor()
-    result = cursor.execute(mysql_string)
+    result = cursor.execute(statement)
     result = cursor.execute('execute doubles;')
     if result == 0:
         result = None
