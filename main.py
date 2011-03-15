@@ -6,6 +6,8 @@ from os.path import abspath
 from log import init_logging
 from logging import getLogger
 from pathwalker import Pathwalker
+from network import TCPServer
+from network import TCPClient
 
 LOG = getLogger('mis.main')
 
@@ -20,9 +22,19 @@ def main():
     """starts the program"""
     init_logging()
 
-    #test = Container(argv[1])
-    from network import Daemon
-    test = Daemon()
+    if len(argv)==2:
+        test = TCPServer()
+        connection = test.accept()
+        result = connection.recv()
+        LOG.info(result)
+        print (result)
+    else:
+        test = TCPClient('127.0.0.1')
+        connection = test.connect()
+        connection.send("This is my first transmission")
+        from time import sleep
+        sleep(100)
+        
     exit(1)
 
     if not len(argv) > 1:
