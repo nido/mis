@@ -3,9 +3,10 @@
 
 from sys import argv
 from os.path import abspath
-from log import init_logging
 from logging import getLogger
+
 from pathwalker import Pathwalker
+from log import init_logging
 
 LOG = getLogger('mis.main')
 
