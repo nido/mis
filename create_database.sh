@@ -98,13 +98,13 @@ then
 	echo "if it doesn't we'll just spit sql for you to execute."
 else
 	servername=$1
-	username=$2
+	user=$2
 	password=$3
 	process "`initiate_database mis`"
 	process "`initiate_database mis_test`"
 	process_db mis "$table_sql"
 	process_db mis_test "$table_sql"
-	allow_user $servername mis $user $password
-	allow_user $serverame mis_test $user $password
+	allow_user "$servername" mis "$user" "$password"
+	allow_user "$servername" mis_test "$user" "$password"
 	process "-- couldn't insert sql code, please run it yourself"
 fi
