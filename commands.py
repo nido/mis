@@ -6,11 +6,13 @@ from mysql import file_exists
 
 
 def parse(string):
-    """This parses a sting which is supposed to be a command"""
+    """This parses a sting which is supposed to be a command
     get_file_command = 'get_file '
     if string[:len(get_file_command)] == get_file_command:
         result = get_local_file(string[len(get_file_command):]
-    return result
+    return result"
+    """
+    pass
 
 def get_local_file(filename):
     """Returns the file data from the file."""

@@ -1,14 +1,23 @@
 """mysql.py manages everything related to the database.
 
 that is, until we decide we want to support other databases."""
-from MySQLdb import connect
 from logging import getLogger
+
+try:
+    from MySQLdb import connect
+except:
+    from log import init_logging
+    init_logging()
+    log = getLogger('mis.mysql')
+    log.critical("MySQL-python is required for this program to"
+            " work")
+    exit(1)
 
 from config import get_config
 from platform import node
 
-LOG = getLogger('mis.mysql')
 
+LOG = getLogger('mis.mysql')
 CONNECTION = None
 
 def _get_connection():

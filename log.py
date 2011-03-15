@@ -39,6 +39,7 @@ from logging import CRITICAL
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 from logging import Formatter
+
 from config import get_config
 
 LOGFILE = '/home/nido/.mis/user.log'
@@ -84,6 +85,7 @@ def set_loglevels():
 
 def init_logging():
     """initialises logging"""
+    # TODO: configurable / more sane default
     if not isdir('/home/nido/.mis/'):
         makedirs('/home/nido/.mis/')
 

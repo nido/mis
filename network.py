@@ -52,86 +52,53 @@ from logging import getLogger
 
 LOG = getLogger('mis.network')
 
-def bint32(x):
+def intb4(x):
     """Turns a number into a 32bit byte array"""
     z=bytearray()
     for y in [3,2,1,0]:
         z.append((x / (256**y)) % 256)
     return z
 
-class connection:
+def b4int(x):
+    """Turns a 32bit byte array into a number"""
+    z=0
+    for y in (0,1,2,3):
+        z = z + x[3-y]*(256**y)
+    return z
+
+
+class Connection:
     """Responsible for the connection. Actual network stuff rather
     then the improvised protocol."""
-    def __init__(self):
-        pass
+    def __init__(self, socket, conn=None, addr=None):
+        self.socket = socket
+        self.connection = conn
+        self.remote_address = addr
 
     def send(self, data):
-        pass
+        """Takes a bytestring and sends it off to the other side.
+        The Connection is responsible for handeling protocols used
+        by this program, and strips off this excess information"""
+        # we send and receive packets.
+        packet = bytearray()
+        # Let's just add a size argument for now
+        packet += intb4(len(data)+4)
+        packet += bytearray(data)
+        return self.socket.send(packet)
 
-    def recv(self, data):
-        pass
+    def recv(self):
+        """receives a packet from the network and returns its
+        bytestream"""
+        print self.socket
+        packet = self.socket.recv(4)
+        print packet
+        packet = bytearray(packet)
+        packet_size = b4int(packet)
+        packet = packet + bytearray(self.socket.recv(packet_size))
+        return packet[4:]
     
-class transaction:
-    """the business of sending a request and getting a
-    reply"""
-    def __init__(self, con, data = None):
-        """Initialises"""
-        self.connection = self.counter()
-        self.data = data
-        self.outgoing = outgoing
-        self.transaction_number = randint(0, 2**32);
-        _transaction_counter += 1
-
-    def execute():
-        """Executes the transaction"""
-        if data:
-            self._send_command(data)
-            return self._recv_data()
-        else:
-            data = self._recv_command()
-            # TODO: parse/execute command)
-            self.send_data(data)
-
-    def _send_command(self, command):
-        x = _packet(self)
-        x.send()
-
-    def _recv_command(self, command):
-        pass
-    def _send_data(self, data):
-        pass
-    def _recv_data(self, data):
-        pass
-
-    class _packet:
-        """A single unit of data, size described in-packet"""
-        def __init__(self, transaction):
-            "initialise"
-            self.payload = None
-            self.id = None
-            self.transaction_size = None
-            self.packet_size = None
-            self.data = None
-            
-            if transaction.data:
-                self.payload = bytearray(transaction.data)
-                self.id = bint32(
-                        transaction.transaction_number)
-                self.transaction_size = bint32(len(self.payload))
-                self.packet_size = bint32(transaction_size +
-                        len(self.id) +
-                        len(self.transaction_size) + 4)
-                self.data = (self.id + self.packet_size +
-                        self.transaction_size + self.payload)
-
-
-        def send(self):
-            pass
-
-        def recv(self):
-            pass
-
-class Daemon:
+    
+class TCPServer:
     """The daemon listens on a specified port and forwards
     set-up to a handler. The daemon is also required to verify it's
     peers and to secure the connection."""
@@ -146,30 +113,32 @@ class Daemon:
         LOG.debug('started socket on "' + str(self.host) + '" port "' +
                 str(self.port) + '". binding')
         self.socket.bind((self.host, self.port))
-        LOG.debug('bind complete, listen(1)ing')
+        LOG.debug('bind complete')
+
+    def accept(self):
+        """Returns a connection made by listening to the port."""
         self.socket.listen(1)
         LOG.debug('accepting')
         conn, addr = self.socket.accept()
         LOG.info('Got a connection from ' + str(addr))
-        ServerHandler(conn, addr)
+        return Connection(self.socket, conn, addr)
+
+class TCPClient:
+    """The tcp client creates a tcp connection to the server."""
+    
+    def __init__(self, host, port=None):
+        config = get_config()
+        self.port = int(config.get('network', 'port'))
+        self.host = host
+        if port:
+            self.port = port
+        self.socket = socket(AF_INET, SOCK_STREAM)
+        self.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+
+    def connect(self):
+        """activates the connection and returns the Connection"""
+        self.socket.connect((self.host, self.port))
+        return Connection(self.socket, None, self.host)
 
 
-class ServerHandler:
-    """The handler is given a socket to which to talk to another
-    client and exchange information and data. This handles the
-    server portion"""
-    def __init__(self, conn, addr):
-        """initiates a server process"""
-        self.connection = conn
-        self.address = addr
-        # let's keep it simple for now and just grab and print
-        # everything
-        while True:
-            # "we're logging; 80 chars a time"
-            bla = conn.recv(80)
-            getLogger('mis.network.Server_handler.traffic').debug(bla)
-            
-        print bla
-        print "done"
-        
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #
