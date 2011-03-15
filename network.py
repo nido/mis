@@ -42,6 +42,7 @@ used as well in order to further guarantee integrity of the bitsream.
 
 from random import randint
 from socket import socket
+from socket import error
 from socket import AF_INET
 from socket import SOCK_STREAM
 from socket import SO_REUSEADDR
@@ -70,9 +71,8 @@ def b4int(x):
 class Connection:
     """Responsible for the connection. Actual network stuff rather
     then the improvised protocol."""
-    def __init__(self, socket, conn=None, addr=None):
+    def __init__(self, socket, addr=None):
         self.socket = socket
-        self.connection = conn
         self.remote_address = addr
 
     def send(self, data):
@@ -84,14 +84,12 @@ class Connection:
         # Let's just add a size argument for now
         packet += intb4(len(data)+4)
         packet += bytearray(data)
-        return self.socket.send(packet)
+        return self.socket.sendall(packet)
 
     def recv(self):
         """receives a packet from the network and returns its
         bytestream"""
-        print self.socket
         packet = self.socket.recv(4)
-        print packet
         packet = bytearray(packet)
         packet_size = b4int(packet)
         packet = packet + bytearray(self.socket.recv(packet_size))
@@ -117,11 +115,11 @@ class TCPServer:
 
     def accept(self):
         """Returns a connection made by listening to the port."""
-        self.socket.listen(1)
+        self.socket.listen(5)
         LOG.debug('accepting')
         conn, addr = self.socket.accept()
         LOG.info('Got a connection from ' + str(addr))
-        return Connection(self.socket, conn, addr)
+        return Connection(conn, addr)
 
 class TCPClient:
     """The tcp client creates a tcp connection to the server."""
@@ -133,12 +131,16 @@ class TCPClient:
         if port:
             self.port = port
         self.socket = socket(AF_INET, SOCK_STREAM)
-        self.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+
 
     def connect(self):
         """activates the connection and returns the Connection"""
-        self.socket.connect((self.host, self.port))
-        return Connection(self.socket, None, self.host)
-
+        try:
+            self.socket.connect((self.host, self.port))
+            return Connection(self.socket, self.host)
+        except:
+            LOG.critical("Connection refused to " + self.host + ":"
+                    + str(self.port))
+            return None
 
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #
