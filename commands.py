@@ -4,9 +4,12 @@ initiates the appropriate backend command (probably network,
 database or maybe probe)"""
 from mysql import file_exists
 
+CMD_DICT={
+    'get file' : get_local_file,
+}
 
 def parse(string):
-    """This parses a sting which is supposed to be a command
+    """This parses a sting which is supposed to be a command"""
     get_file_command = 'get_file '
     if string[:len(get_file_command)] == get_file_command:
         result = get_local_file(string[len(get_file_command):]
@@ -17,6 +20,7 @@ def parse(string):
 def get_local_file(filename):
     """Returns the file data from the file."""
     filedata = None
+    # TODO: limit this to MIS files only
     if file_exists(filename):
         filedata = open(filename).read()
     return filedata
