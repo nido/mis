@@ -12,9 +12,10 @@ function analyser(){
 	if ! exists $1
 	then
 		echo "you should install $1, or put it in your path"
+        return false
 	else
 		echo "analyser $1"
-		$1 $2 *.py | grep -v "^[ \t]*$"
+		$1 $2 *.py 2>&1 | grep -v "^[ \t]*$"
 	fi
 
 
@@ -40,4 +41,14 @@ done
 analyser pylint "-r n" | grep -v "^\([RI]:\|No config file\)"
 analyser epylint
 analyser pyflakes
+if exists coverage 
+then
+    echo "generating total coverage report"
+    coverage erase
+    for x in test*.py
+    do
+        coverage run -a --branch $x
+    done
+    coverage html
+fi
 # vim: set tabstop=4 expandtab textwidth=66: #
