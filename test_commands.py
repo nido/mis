@@ -6,7 +6,7 @@ from unittest import TestCase
 from unittest import main
 
 from commands import get_function
-#from commands import get_command
+from commands import get_command
 from commands import get_local_file
 
 class TestCommandModule(TestCase): # pylint: disable-msg=R0904
@@ -18,6 +18,11 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         """tests the function get_function"""
         guess = get_function('get filedataargument')
         answer = (get_local_file, 'argument')
+        self.assertTrue(guess == answer)
+
+    def test_get_command(self):
+        guess = get_command(get_local_file)
+        answer = 'get filedata'
         self.assertTrue(guess == answer)
 
 if __name__ == '__main__':

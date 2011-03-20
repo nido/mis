@@ -30,8 +30,8 @@ def get_command(function):
     """ Returns the command string that belongs to the function,
         or None."""
     result = None
-    for name, funct in COMMAND_DICT.values():
-        if function == funct:
+    for name in COMMAND_DICT:
+        if COMMAND_DICT[name] == function:
             result = name
             break
     return result
