@@ -96,7 +96,22 @@ valid loglevel options are from least to most severe: 'debug', 'info', 'warn',
 'error', 'critical'. Setting the log level ensures only logs from that level and higher
 are logged. By default, only INFO and higher is considered for logging (including the debug log)
 
+SHA512 hash
+===========
+Within this application, at least in the beinning, the sha512 hash will
+be assumed to be a perfect hashing algorithm. However, in reality, it is
+not.
 
+According to the principles of the birthday attack; at 1.25 * sqrt(2**512) =
+1.4474011154664524e+77 we can expect to have a collision. 
+
+in fact, here's a nice list courticy of wikipedia
+Desired probability of random collision (p)
+10e−18  10e−15  10e−12  10e−9   10e−6   0.1%    1%      25%     50%     75%
+1.6e68  5.2e69  1.6e71  5.2e72  1.6e74  5.2e75  1.6e76  8.8e76  1.4e77  1.9e77
+
+so you can be about 99.9999999999999999% sure you have no collisions and have
+160000000000000000000000000000000000000000000000000000000000000000000 files indexed.
 
 general list of todo stuff
 ==========================
