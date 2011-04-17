@@ -10,20 +10,23 @@ from commands import get_command
 from commands import get_local_file
 
 class TestCommandModule(TestCase): # pylint: disable-msg=R0904
-    """Tests the commands module in mis"""
-    def setUp(self): # pylint: disable-msg=C0103
-        pass
+    """tests command.py"""
+
 
     def test_get_function(self):
-        """tests the function get_function"""
-        guess = get_function('get filedataargument')
-        answer = (get_local_file, 'argument')
-        self.assertTrue(guess == answer)
+        """tests if the get_function method works"""
+        command_string = "get filedatabla"
+        self.assertEqual(get_function(command_string),
+                (get_local_file, "bla"))
 
     def test_get_command(self):
-        guess = get_command(get_local_file)
-        answer = 'get filedata'
-        self.assertTrue(guess == answer)
+        """tests if the get_command method works"""
+        command_string = "get filedata"
+        self.assertEqual(get_command(get_local_file),
+                command_string)
+
+#    def test_get_local_file(self):
+#        """tests if the get_local_file method works"""
 
 if __name__ == '__main__':
     main()

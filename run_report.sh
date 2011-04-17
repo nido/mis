@@ -4,6 +4,8 @@
 # pyflakes, epylint and unit tests, however, this is to be
 # extended with any other test methods known by anyone.
 
+clear
+
 function exists(){
 	test -f "`which $1 2>/dev/null`"
 }
