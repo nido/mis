@@ -12,7 +12,7 @@ function analyser(){
 	if ! exists $1
 	then
 		echo "you should install $1, or put it in your path"
-        return false
+        return 1
 	else
 		echo "analyser $1"
 		$1 $2 *.py 2>&1 | grep -v "^[ \t]*$"
