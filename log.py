@@ -112,7 +112,7 @@ def init_logging():
 
     stderr = StreamHandler()
     handler.setFormatter(fileformatter)
-    stderr.setLevel(WARN)
+    stderr.setLevel(DEBUG)
     rootlog.addHandler(stderr)
 
     set_loglevels()

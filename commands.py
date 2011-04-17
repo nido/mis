@@ -3,10 +3,10 @@
     initiates the appropriate backend command (probably network,
     database or maybe probe)"""
 from logging import getLogger
-
+from os.path import abspath
 from mysql import file_exists
 
-LOG = getLogger('mis.')
+LOG = getLogger('mis.commands')
 
 def get_function(string):
     """ Returns a tuple containing the string and accompanying
@@ -20,7 +20,7 @@ def get_function(string):
             argument = string[len(name):]
             break # optimisation: breakout of for loop
     if command == None:
-        LOG.info('received invalid command')
+        LOG.info('received invalid command:')
         LOG.info(string)
     else:
         result = (command, argument)
@@ -39,8 +39,11 @@ def get_command(function):
 def get_local_file(filename):
     """Returns the file data from the file."""
     filedata = None
-    if file_exists(filename):
-        filedata = open(filename).read()
+    filename = str(filename)
+    if file_exists(abspath(filename)):
+        filedata = open(filename, 'r').read()
+    else:
+        LOG.error("No file found at " + filename)
     return filedata
         
 COMMAND_DICT = {

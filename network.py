@@ -40,17 +40,18 @@ SSL encryption should be
 used as well in order to further guarantee integrity of the bitsream.
 """
 
+from os import error as oserror
 from random import randint
 from socket import socket
-from socket import error
+from socket import error as socketerror
 from socket import AF_INET
 from socket import SOCK_STREAM
 from socket import SO_REUSEADDR
 from socket import SOL_SOCKET
 
 from config import get_config
+from commands import get_function
 from logging import getLogger
-
 LOG = getLogger('mis.network')
 
 def intb4(integer):
@@ -75,7 +76,36 @@ class Connection:
         self.socket = socket_
         self.remote_address = addr
 
-    def send(self, data):
+    def rpc_call(self, command):
+        """Does a rpc call through the connection and returns the
+        result."""
+        if command == None:
+            LOG.error("Cannot send empty command")
+            return
+        self._send(command)
+        return str(self._recv())
+
+    def rpc_listen(self):
+        """The sister of the rpc call procedure. This receives the
+        call, processes it, and returns the answer.
+        NOTE: there is a serious lack of security in this function
+        and the database in general. Right now, using this function
+        basically means you serve any media file to anyone."""
+        command = self._recv()
+        cmd = get_function(command)
+        if cmd == None:
+            LOG.error("Received an invalid command: Aborting. ")
+            LOG.error(command);
+            return
+        function, arguments = cmd
+        LOG.info(command[:12] + " - " + str(function) + " - " + arguments);
+        result = function(arguments)
+        if result == None:
+            LOG.error("Function returned nothing. something went wrong.")
+            result = ""
+        self._send(result)
+
+    def _send(self, data):
         """Takes a bytestring and sends it off to the other side.
         The Connection is responsible for handeling protocols used
         by this program, and strips off this excess information"""
@@ -90,12 +120,17 @@ class Connection:
                 str(b4int(packet[4:8])))
         return self.socket.sendall(packet)
 
-    def recv(self):
+    def _recv(self):
         """receives a packet from the network and returns its
         bytestream"""
         packet = self.socket.recv(4)
+        if len(packet) == 0:
+            LOG.error("received a nothing, aborting.")
+            return bytearray()
+
         packet = bytearray(packet)
         packet_size = b4int(packet)
+        print "packet size " + str(packet_size)
         packet = packet + bytearray(self.socket.recv(packet_size))
         LOG.debug('received transaction ' +
                 str(b4int(packet[4:8])))
@@ -144,7 +179,7 @@ class TCPClient:
         try:
             self.socket.connect((self.host, self.port))
             return Connection(self.socket, self.host)
-        except error:
+        except oserror:
             LOG.info("Connection refused to " + self.host + ":"
                     + str(self.port))
             LOG.info(error)

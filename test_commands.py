@@ -8,10 +8,13 @@ from unittest import main
 from commands import get_function
 from commands import get_command
 from commands import get_local_file
+from log import init_logging
 
 class TestCommandModule(TestCase): # pylint: disable-msg=R0904
     """tests command.py"""
 
+    def setUp(self): # pylint: disable-msg=C0103
+        init_logging()
 
     def test_get_function(self):
         """tests if the get_function method works"""
