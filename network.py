@@ -95,10 +95,10 @@ class Connection:
         cmd = get_function(command)
         if cmd == None:
             LOG.error("Received an invalid command: Aborting. ")
-            LOG.error(command);
+            LOG.error(command)
             return
         function, arguments = cmd
-        LOG.info(command[:12] + " - " + str(function) + " - " + arguments);
+        LOG.info(command[:12] + " - " + str(function) + " - " + arguments)
         result = function(arguments)
         if result == None:
             LOG.error("Function returned nothing. something went wrong.")

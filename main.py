@@ -44,8 +44,8 @@ def main():
         test = TCPClient('127.0.0.1')
         connection = test.connect()
         if connection:
-            x = connection.rpc_call("get filedatatest_files/test.avi")
-            open("output", "w").write(x)
+            con = connection.rpc_call("get filedatatest_files/test.avi")
+            open("output", "w").write(con)
         else:  
             print("cannot connect to the server.")
         
