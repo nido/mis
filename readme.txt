@@ -86,7 +86,7 @@ config. All entries are included to the config, even if they seem nonsensical.
 Configuration files are done
 using the configparser from python. This means we have .ini like config
 files. These have sections, signified by the [] (e.g. [section_name]); and
-options ("key = value" pairs). 
+options (key-value pairs). 
 
 current configurable options are described in the default config at config.py
 
