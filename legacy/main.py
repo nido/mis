@@ -8,8 +8,8 @@ from logging import getLogger
 
 from log import init_logging
 from pathwalker import Pathwalker
-from network import TCPServer
-from network import TCPClient
+#from network import TCPServer
+#from network import TCPClient
 from time import sleep
 
 LOG = getLogger('mis.main')
@@ -28,28 +28,28 @@ def main():
     walker = Pathwalker()   
     walker.evaluate_path(abspath("test_files"), Pathwalker.add_file)
 
-    pid = fork()
-    if pid != 0:
-        test = TCPServer()
-        connection = test.accept()
-        connection.rpc_listen()
+    #pid = fork()
+    #if pid != 0:
+    #    test = TCPServer()
+    #    connection = test.accept()
+    #    connection.rpc_listen()
                 
 
         #result = str(connection._recv())
         #open('output','w').write(result)
         #LOG.info(result)
         #print (result)
-    else:
-        sleep(1)
-        test = TCPClient('127.0.0.1')
-        connection = test.connect()
-        if connection:
-            con = connection.rpc_call("get filedatatest_files/test.avi")
-            open("output", "w").write(con)
-        else:  
-            print("cannot connect to the server.")
+    #else:
+    #    sleep(1)
+    #    test = TCPClient('127.0.0.1')
+    #    connection = test.connect()
+    #    if connection:
+    #        con = connection.rpc_call("get filedatatest_files/test.avi")
+    #        open("output", "w").write(con)
+    #    else:  
+    #        print("cannot connect to the server.")
         
-    exit(1)
+    #exit(1)
 
     if not len(argv) > 1:
         LOG.critical('No path is given, cannot continue')

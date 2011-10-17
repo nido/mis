@@ -5,7 +5,7 @@ from logging import getLogger
 
 try:
     from MySQLdb import connect
-except ImportError:
+#except ImportError:
     from log import init_logging
     init_logging()
     LOG = getLogger('mis.mysql')

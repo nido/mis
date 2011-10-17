@@ -4,8 +4,7 @@ from os import walk
 from re import compile as regex
 from sys import argv
 from hashlib import sha512 # pylint: disable-msg=E0611
-from mysql import save_file
-from mysql import file_exists
+from database import database
 from media import Container
 
 from logging import getLogger
@@ -29,6 +28,7 @@ and apply a function to them."""
 
     def __init__(self):
         self.nodename = node()
+        self.database = database()
         if len(argv) > 2:
             self.nodename = argv[2]
         
@@ -45,13 +45,10 @@ and apply a function to them."""
             
     def add_file(self, filename):
         """A function which adds a file to the database"""
-        if not file_exists(filename):
+        if not self.database.file_exists(self.nodename, filename):
             LOG.info("inserting " + filename)
-            container = Container(filename)
             sha512sum = sha512(open(filename).read()).hexdigest()
-            save_file(sha512sum, filename, active=True,
-                    nodename=self.nodename, container_id = 
-                    container.key)
+            database.add_file(self.node, filename, sha512sum);
         else:
             LOG.debug("already know" + filename + ", ignoring")
 

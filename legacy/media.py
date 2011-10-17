@@ -10,8 +10,8 @@ audio. In that case, it is not a video file but an audio file.
 """
 from platform import node
 from logging import getLogger
-from mysql import save_container
-from mysql import find_container
+#from mysql import save_container
+#from mysql import find_container
 from ffprobe import Prober
 
 LOG = getLogger('mis.media')
@@ -40,7 +40,7 @@ well."""
 
     def database_init(self, nodename, filename):
         """initialise using the database"""
-        result = find_container(nodename, filename)
+        #result = find_container(nodename, filename)
         if result == None:
             return False
         self.key = result[0]
@@ -82,8 +82,8 @@ well."""
         self.bitrate = int(
                 probe.raw_container['bit_rate'].split('.')[0])
         
-        container = save_container(self.streamcount, self.container_type, 
-                self.duration, self.size, self.bitrate)
+        #container = save_container(self.streamcount, self.container_type, 
+        #        self.duration, self.size, self.bitrate)
         return container
         
 # vim: set tabstop=4 expandtab textwidth=66: #
