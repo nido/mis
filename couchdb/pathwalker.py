@@ -40,7 +40,6 @@ and apply a function to them."""
         for item in walk(path):
             for filename in item[2]:
                 if(finder(filename)):
-                    print(item[0])
                     self.add_file(item[0] + sep + filename)
             
     def add_file(self, filename):

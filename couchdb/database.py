@@ -4,11 +4,13 @@ from couchdb.client import Server
 from couchdb.client import ResourceNotFound
 
 def template_replace(template, replace):
-        function = template
-        for key in replace:
-            value = replace[key]
-            function = function.replace('{{' + key + '}}', value)
-        return function
+    """Takes a template and replaces the the keys in the replace
+    fictionary with the values"""
+    function = template
+    for key in replace:
+        value = replace[key]
+        function = function.replace('{{' + key + '}}', value)
+    return function
 
 class Database():
     """The Database class incorperates functions you wish to ask
