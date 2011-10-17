@@ -48,9 +48,6 @@ and apply a function to them."""
         if not self.database.path_exists(self.nodename, filename):
             LOG.info("inserting " + filename)
             sha512sum = sha512(open(filename).read()).hexdigest()
-            self.database.add_path(sha512sum, {'node': self.nodename,
-                    'path': filename})
-        #else:
-        #    LOG.debug("already know" + filename + ", ignoring")
+            self.database.add_path(sha512sum, self.nodename, filename)
 
 # vim: set tabstop=4 expandtab textwidth=66: #
