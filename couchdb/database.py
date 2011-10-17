@@ -16,19 +16,19 @@ class Database():
     """The Database class incorperates functions you wish to ask
     the database"""
 
-    __PATH_EXISTS_TEMPLATE = """function(doc) {
-  for (i=0; i<doc.paths.length; i++){
-    entry = doc.paths[i]
-    if (entry.node == "{{node}}" && entry.path == "{{path}}"){
-      emit(doc);
-    }
+    __DESIGN_VIEWS_PATHS_MAP = """function(doc){
+  for(i=0; i<doc.paths.length; i++){
+      entry = doc.paths[i]
+      key = entry.node + ':' + entry.path
+      if(entry.node && entry.path){
+        emit(key, doc)
+      }
   }
 }"""
+  
 
-    __FILE_EXISTS_TEMPLATE = """function(doc) {
-  if(doc.sha512 == "{{sha512}}"){
-    emit(doc._id, doc)
-  }
+    __DESIGN_VIEWS_SHASUMS_MAP = """function(doc){
+    emit(doc._id,doc)
 }"""
 
     def __init__(self):
@@ -38,7 +38,18 @@ class Database():
         try:
             self.database = self.server['mis']
         except(ResourceNotFound):
+            # The database didn't exist. Lets create it.
             self.database = self.server.create('mis')
+            views = {
+                '_id': '_design/views',
+                'language': 'javascript',
+                'views': {
+                    'shasums':
+                        {'map': self.__DESIGN_VIEWS_SHASUMS_MAP},
+                    'paths':
+                        {'map': self.__DESIGN_VIEWS_PATHS_MAP }}}
+            self.database.create(views)
+
 
     def add_path(self, shasum, node, path):
         """Adds a path to the database"""
@@ -48,28 +59,25 @@ class Database():
             mis_file['paths'].append(path_info)
             self.database[mis_file['_id']] = mis_file
         else:
-            entry = {'sha512':shasum, 'paths':[path_info]}
+            entry = {'_id':shasum, 'paths':[path_info]}
             self.database.create(entry)
 
     def file_exists(self, sha512):
         """Checks if a file (shasum) exists in the database, and
         returns the entry when found"""
         result = None
-        entries = {'sha512': sha512}
-        function = template_replace(self.__FILE_EXISTS_TEMPLATE, entries)
-        results = self.database.query(function)
-        if len(results) > 0:
-            result = (results.rows[0].value)
+        results = self.database.view('views/shasums', key = sha512)
+        if(len(results) > 0):
+            result = results.rows[0].value
         return result
 
     def path_exists(self, node, path):
         """Checks whether a certain path exists and returns True
         or False"""
         result = False
-        entries = {'path':path, 'node':node}
-        function = template_replace(self.__PATH_EXISTS_TEMPLATE, entries)
-        results = self.database.query(function)
-        if len(results) > 0:
+        key = node + ":" + path
+        results = self.database.view('views/paths', key = key)
+        if(len(results) > 0):
             result = True
         return result
 		
