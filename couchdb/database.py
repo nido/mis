@@ -1,7 +1,11 @@
 """Handles couchdb for mis"""
 
+from logging import getLogger
+
 from couchdb.client import Server
 from couchdb.client import ResourceNotFound
+
+LOG = getLogger("mis.couchdb")
 
 def template_replace(template, replace):
     """Takes a template and replaces the the keys in the replace
@@ -11,6 +15,16 @@ def template_replace(template, replace):
         value = replace[key]
         function = function.replace('{{' + key + '}}', value)
     return function
+
+class DatabaseError(Exception):
+    """Error signifying something is wrong with the database"""
+    def __init__(self, value):
+        """initialises the error"""
+        self.value = value
+        Exception.__init__(self, value)
+    def __str__(self):
+        """returns the string representation of the error"""
+        return repr(self.value)
 
 class Database():
     """The Database class incorperates functions you wish to ask
@@ -52,16 +66,15 @@ class Database():
 
     def add_data(self, shasum, name, data):
         """adds data to a record"""
-        try:
-         mis_file = self.file_exists(shasum)
-         if mis_file:
+        mis_file = self.file_exists(shasum)
+        if mis_file:
             mis_file[name] = data
             self.database[shasum] = mis_file
-        except:
-            print mis_file
-            print name
-            print data
-            raise
+        else:
+            error = DatabaseError("shasum doesn't exist")
+            LOG.error(error)
+            raise(error)
+            
 
     def add_path(self, shasum, node, path):
         """Adds a path to the database"""

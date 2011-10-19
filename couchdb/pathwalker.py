@@ -9,7 +9,6 @@ from hashlib import sha512 # pylint: disable-msg=E0611
 
 from config import get_config
 from database import Database
-from ffprobe import test_ffprobe
 from ffprobe import Prober
 
 
@@ -44,21 +43,23 @@ and apply a function to them."""
         for item in walk(path):
             try: 
                 pathname = item[0].decode(encoding)
-            except UnicodeDecodeError as e:
-                LOG.warn("Could not add path " +
-                        filename + ". because it is not in the filesystem's encoding." + e)
-            else:
-                for filename in item[2]:
-                    if(finder(filename)):
-                        try: 
-                            filename = filename.decode(encoding)
-                        except UnicodeDecodeError as e:
-                            LOG.warn("Could not add file " +
-                                    filename + ". because it is not in the filesystem's encoding." + e)
-                        else:
-                            full_path = pathname + sep + filename
-                            self.add_file(full_path)
-            
+            except UnicodeDecodeError as error:
+                LOG.warn("Could not add path " + pathname +
+                        " because it is not in the filesystem's" +
+                        " native encoding: " + error)
+                continue
+            for filename in item[2]:
+                if(finder(filename)):
+                    try: 
+                        filename = filename.decode(encoding)
+                    except UnicodeDecodeError as error:
+                        LOG.warn("Could not add file " + filename
+                                + ". because it is not in the " +
+                                "filesystem's encoding: " + error)
+                    else:
+                        full_path = pathname + sep + filename
+                        self.add_file(full_path)
+
     def add_file(self, filename):
         """A function which adds a file to the database"""
         if not self.database.path_exists(self.nodename, filename):
