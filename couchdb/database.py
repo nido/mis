@@ -50,6 +50,18 @@ class Database():
                         {'map': self.__DESIGN_VIEWS_PATHS_MAP }}}
             self.database.create(views)
 
+    def add_data(self, shasum, name, data):
+        """adds data to a record"""
+        try:
+         mis_file = self.file_exists(shasum)
+         if mis_file:
+            mis_file[name] = data
+            self.database[shasum] = mis_file
+        except:
+            print mis_file
+            print name
+            print data
+            raise
 
     def add_path(self, shasum, node, path):
         """Adds a path to the database"""

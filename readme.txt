@@ -1,9 +1,12 @@
 Media Information System
 ========================
 
+This file is out of date, this is now done with couchdb. see couch directory for new code
+
 Needed packages:
-- Python
-- Python-MySQL (fedora: MySQL-python)
+- python
+- Python-MySQL (fedora: MySQL-python) <-- not anymore
+- python-couchdb
 
 This is an attempt to make it feasable to handle media libraries
 of ridiculous proportions. Because of that, it uses a library of

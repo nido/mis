@@ -8,7 +8,9 @@ from logging import getLogger
 from log import init_logging
 from pathwalker import Pathwalker
 
+# Initialise logging
 LOG = getLogger('mis.main')
+
 
 def usage():
     """echos how to use this executable"""
