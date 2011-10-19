@@ -18,7 +18,7 @@ LOG = getLogger('mis.pathwalker')
 def get_filter():
     """a filter which takes out only filenames which probably contain media"""
     extensions = ['avi', 'mpg', 'mpeg', 'mp4', 'mkv', 'ogv', \
-            'flv', 'ogg','mov', 'mp3', 'ac3']
+            'flv', 'ogg','mov', 'mp3', 'ac3', 'rm', 'ram', 'wmv']
     regexstring = '\.('
     for extension in extensions:
         regexstring = regexstring + extension + '|'
@@ -61,23 +61,24 @@ in the configuration."""
                         LOG.warn("Could not add file " + filename
                                 + ". because it is not in the " +
                                 "filesystem's encoding: " + error)
-                    else:
-                        full_path = pathname + sep + filename
-                        self.add_file(full_path)
+                        continue
+                    full_path = pathname + sep + filename
+                    self.add_file(full_path)
+                    self.add_ffprobe_data(full_path)
 
     def add_file(self, filename):
         """A function which adds a file to the database"""
         if not self.database.path_exists(self.nodename, filename):
             LOG.info("inserting " + filename)
-            sha512sum = sha512(open(filename).read()).hexdigest()
-            self.database.add_path(sha512sum, self.nodename, filename)
-            self.add_ffprobe_data(sha512sum, filename)
+            shasum = sha512(open(filename).read()).hexdigest()
+            self.database.add_path(shasum, self.nodename, filename)
 
-    def add_ffprobe_data(self, shasum, filename):
+    def add_ffprobe_data(self, filename):
         """Adds ffprobe data to the database"""
         LOG.info("adding ffprobe data for " + filename)
         ffprobe = Prober(filename)
         ffprobe_data = ffprobe.get_properties()
+        shasum = self.database.path_exists(self.nodename, filename)
         self.database.add_data(shasum, 'ffprobe', ffprobe_data)
         
 # vim: set tabstop=4 expandtab textwidth=66: #

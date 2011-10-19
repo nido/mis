@@ -34,7 +34,7 @@ class Database():
     __DESIGN_VIEWS_PATHS_MAP = """function(doc){
   for(i=0; i<doc.paths.length; i++){
       entry = doc.paths[i]
-      key = entry.node + ':' + entry.path
+      key = [entry.node, entry.path]
       if(entry.node && entry.path){
         emit(key, doc._id)
       }
@@ -66,6 +66,8 @@ class Database():
 
     def add_data(self, shasum, name, data):
         """adds data to a record"""
+        shasum = unicode(shasum)
+        name = unicode(name)
         if self.file_exists(shasum):
             mis_file = self.database[shasum]
             mis_file[name] = data
@@ -73,10 +75,12 @@ class Database():
         else: # create when nonexistent
             entry = {'_id': shasum, name: data}
             self.database.create(entry)
-            
 
     def add_path(self, shasum, node, path):
         """Adds a path to the database"""
+        shasum = unicode(shasum)
+        node = unicode(node)
+        path = unicode(path)
         path_info = {'node': node, 'path': path}
         if self.file_exists(shasum):
             mis_file = self.database[shasum]
@@ -86,15 +90,16 @@ class Database():
             entry = {'_id': shasum, 'paths': [path_info]}
             self.database.create(entry)
 
-    def file_exists(self, sha512):
+    def file_exists(self, shasum):
         """Checks if a file (shasum) exists in the database, and
         returns the entry when found"""
-        result = False
+        shasum = unicode(shasum)
+        result = None
         try:
             # Note: the following line triggers the
             # ResourceNotFound if the sha is not known
-            self.database[sha512]  # pylint: disable-msg=W0104
-            result = True
+            self.database[shasum]  # pylint: disable-msg=W0104
+            result = shasum
         except ResourceNotFound:
             pass # expected
         return result
@@ -102,10 +107,12 @@ class Database():
     def path_exists(self, node, path):
         """Checks whether a certain path exists and returns True
         or False"""
+        node = unicode(node)
+        path = unicode(path)
         result = None
         key = [node, path]
         results = self.database.view('views/paths', key = key)
         if(len(results) > 0):
-            return result
+            return results.rows[0]['value']
 		
 # vim: set tabstop=4 expandtab textwidth=66: #
