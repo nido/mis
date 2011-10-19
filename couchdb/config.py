@@ -10,10 +10,13 @@ equivalent once one is defined)), user configuration (defined in
 command-line). This file is also responsible for parsing these
 files.
 """
-from ConfigParser import SafeConfigParser
 from os.path import expanduser
-from ConfigParser import NoSectionError
+from os.path import exists
 from logging import getLogger
+
+from ConfigParser import SafeConfigParser
+from ConfigParser import NoSectionError
+
 LOG = getLogger('mis.config')
 SINGLETON = None #: Singleton holds the configuration itself.
 
@@ -61,8 +64,10 @@ python's very own ConfigParser."""
     def __init__(self):
         """initialises the configurations"""
         self._parser = default_config()
-        self.read = self._parser.read([self.system_file, self.user_filename])
         self.userconfig = SafeConfigParser()
+        self.read = self._parser.read([self.system_file, self.user_filename])
+        if not exists(self.user_filename):
+            self._parser.write(open(self.user_filename,'w'))
         self.userconfig.read([self.user_filename])
         LOG.info("Configuration initialised")
 
