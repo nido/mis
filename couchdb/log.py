@@ -29,6 +29,7 @@ means one should be able to logger.getLogger a mis.whatever log and
 start using it. The root log thus obviously is 'mis'.
 """
 from os.path import isdir
+from os.path import expanduser
 from os import makedirs
 from logging import getLogger
 from logging import DEBUG
@@ -42,8 +43,8 @@ from logging import Formatter
 
 from config import get_config
 
-LOGFILE = '/home/nido/.mis/user.log'
-DEBUGLOGFILE = '/home/nido/.mis/debug.log'
+LOGFILE = expanduser('~/.mis/user.log')
+DEBUGLOGFILE = expanduser('~/.mis/debug.log')
 
 LOG = getLogger('mis.log')
 
@@ -53,7 +54,7 @@ STR_LVL = {"debug": DEBUG,
         "error": ERROR,
         "critical": CRITICAL}
 
-LVL_STR = dict((v, k) for k, v in STR_LVL.iteritems())
+LVL_STR = dict((v, k) for k, v in STR_LVL.iteritems()) # invert STR_LVL
 
 
 def get_loglevel(string):
@@ -85,9 +86,9 @@ def set_loglevels():
 
 def init_logging():
     """initialises logging"""
-    # TODO: configurable / more sane default
-    if not isdir('/home/nido/.mis/'):
-        makedirs('/home/nido/.mis/')
+    config_dir = expanduser('~/.mis/')
+    if not isdir(config_dir):
+        makedirs(config_dir)
 
     fileformatter = Formatter("%(asctime)s - %(name)s - " + \
             "%(levelname)s - %(message)s")
