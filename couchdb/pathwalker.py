@@ -37,7 +37,12 @@ and apply a function to them."""
         
 
     def evaluate_path(self, path):
-        """Do the actual pathwalking"""
+        """Do the actual pathwalking. The pathwalker does not
+accept files which are not in the native character set. This is
+because filenames are saved in and retrieved from the database in
+utf8, and do not translate back correctly. The default charset for
+a filesystem according to mis is utf8. The default can be changed
+in the configuration."""
         finder = get_filter()
         encoding = get_config().get('charsets', 'filesystem')
         for item in walk(path):

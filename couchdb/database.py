@@ -20,8 +20,9 @@ class DatabaseError(Exception):
     """Error signifying something is wrong with the database"""
     def __init__(self, value):
         """initialises the error"""
-        self.value = value
         Exception.__init__(self, value)
+        self.value = value
+        LOG.debug(value)
     def __str__(self):
         """returns the string representation of the error"""
         return repr(self.value)
@@ -35,14 +36,13 @@ class Database():
       entry = doc.paths[i]
       key = entry.node + ':' + entry.path
       if(entry.node && entry.path){
-        emit(key, doc)
+        emit(key, doc._id)
       }
   }
 }"""
-  
 
     __DESIGN_VIEWS_SHASUMS_MAP = """function(doc){
-    emit(doc._id,doc)
+    emit(doc._id)
 }"""
 
     def __init__(self):
@@ -66,44 +66,46 @@ class Database():
 
     def add_data(self, shasum, name, data):
         """adds data to a record"""
-        mis_file = self.file_exists(shasum)
-        if mis_file:
+        if self.file_exists(shasum):
+            mis_file = self.database[shasum]
             mis_file[name] = data
             self.database[shasum] = mis_file
-        else:
-            error = DatabaseError("shasum doesn't exist")
-            LOG.error(error)
-            raise(error)
+        else: # create when nonexistent
+            entry = {'_id': shasum, name: data}
+            self.database.create(entry)
             
 
     def add_path(self, shasum, node, path):
         """Adds a path to the database"""
         path_info = {'node': node, 'path': path}
-        mis_file = self.file_exists(shasum)
-        if mis_file:
+        if self.file_exists(shasum):
+            mis_file = self.database[shasum]
             mis_file['paths'].append(path_info)
             self.database[mis_file['_id']] = mis_file
-        else:
-            entry = {'_id':shasum, 'paths':[path_info]}
+        else: # create when nonexistent
+            entry = {'_id': shasum, 'paths': [path_info]}
             self.database.create(entry)
 
     def file_exists(self, sha512):
         """Checks if a file (shasum) exists in the database, and
         returns the entry when found"""
-        result = None
-        results = self.database.view('views/shasums', key = sha512)
-        if(len(results) > 0):
-            result = results.rows[0].value
+        result = False
+        try:
+            # Note: the following line triggers the
+            # ResourceNotFound if the sha is not known
+            self.database[sha512]  # pylint: disable-msg=W0104
+            result = True
+        except ResourceNotFound:
+            pass # expected
         return result
 
     def path_exists(self, node, path):
         """Checks whether a certain path exists and returns True
         or False"""
-        result = False
-        key = node + ":" + path
+        result = None
+        key = [node, path]
         results = self.database.view('views/paths', key = key)
         if(len(results) > 0):
-            result = True
-        return result
+            return result
 		
 # vim: set tabstop=4 expandtab textwidth=66: #
