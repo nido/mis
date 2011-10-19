@@ -70,8 +70,10 @@ class Database():
         name = unicode(name)
         if self.file_exists(shasum):
             mis_file = self.database[shasum]
-            mis_file[name] = data
-            self.database[shasum] = mis_file
+            # only save if the data has changed
+            if not mis_file.has_key(name) or mis_file[name] != data:
+                mis_file[name] = data
+                self.database[shasum] = mis_file
         else: # create when nonexistent
             entry = {'_id': shasum, name: data}
             self.database.create(entry)

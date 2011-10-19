@@ -129,7 +129,6 @@ current node dictionary"""
             elif current_node != None: # data line
                 temp = line.split('=', 1)
                 if (len(temp) > 1) and (temp[1] != ''):
-                    print temp[1]
                     current_node[temp[0]] = _correct_encoding(temp[1])
                     current_key = temp[0]
                 else:
