@@ -42,6 +42,7 @@ blissfully ignorant of the defaultness of said configuration."""
     # default loglevels
     config.add_section('loglevels')
     config.set('loglevels', 'mis.config', 'info')
+    config.set('loglevels', 'mis.database', 'info')
     config.set('loglevels', 'mis.ffprobe', 'info')
     config.set('loglevels', 'mis.log', 'info')
     config.set('loglevels', 'mis.main', 'info')
@@ -52,6 +53,10 @@ blissfully ignorant of the defaultness of said configuration."""
     config.add_section('charsets')
     config.set('charsets', 'filesystem', 'utf8')
     config.set('charsets', 'fallback', 'latin1')
+    config.add_section('couchdb')
+    config.set('couchdb', 'database', 'mis')
+    config.set('couchdb', 'hostname', 'localhost')
+    config.set('couchdb', 'port', '5984')
 
     return config
 

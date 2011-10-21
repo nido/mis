@@ -18,7 +18,9 @@ LOG = getLogger('mis.pathwalker')
 def get_filter():
     """a filter which takes out only filenames which probably contain media"""
     extensions = ['avi', 'mpg', 'mpeg', 'mp4', 'mkv', 'ogv', \
-            'flv', 'ogg','mov', 'mp3', 'ac3', 'rm', 'ram', 'wmv']
+            'flv', 'ogg','mov', 'mp3', 'ac3', 'rm', 'ram', \
+            'wmv', '3gp', 'aac', 'asf', 'h263', 'webm', 'm4a', \
+            '3g2', 'mj2']
     regexstring = '\.('
     for extension in extensions:
         regexstring = regexstring + extension + '|'
@@ -75,10 +77,11 @@ in the configuration."""
 
     def add_ffprobe_data(self, filename):
         """Adds ffprobe data to the database"""
-        LOG.info("adding ffprobe data for " + filename)
         ffprobe = Prober(filename)
         ffprobe_data = ffprobe.get_properties()
         shasum = self.database.path_exists(self.nodename, filename)
+        db_entry = self.database.get_document(shasum)
         self.database.add_data(shasum, 'ffprobe', ffprobe_data)
+        # TODO: else update?
         
 # vim: set tabstop=4 expandtab textwidth=66: #

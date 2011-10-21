@@ -40,6 +40,7 @@ set cannot decode the string, latin1 is used as fallback."""
     except (UnicodeDecodeError, TypeError) as error:
         LOG.info('Character encoding detection failed: ' +
                 str(error))
+        LOG.info('input string: ' + string)
     charset = get_config().get('charsets', 'fallback')
     if goodstring == None:
         LOG.info('using fallback (' + charset + ')')
@@ -47,7 +48,7 @@ set cannot decode the string, latin1 is used as fallback."""
             goodstring = string.decode(charset)
         except (UnicodeDecodeError, TypeError) as error:
             LOG.warn("Couldn't decode string as fallback encoding.")
-    
+            LOG.info('input string: ' + string)
     if goodstring == None:
         goodstring = string.decode('latin1')
     return goodstring
@@ -90,7 +91,8 @@ part)"""
         for dictionary in tag_sources:
             for key in dictionary.keys():
                 if key[:4] == 'TAG:':
-                    self.raw_tags = {}
+                    if not self.raw_tags:
+                        self.raw_tags = {}
                     value = dictionary.pop(key)
                     self.raw_tags[key[4:]] = value
 
