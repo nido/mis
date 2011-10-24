@@ -54,7 +54,7 @@ class Database():
 
     __DESIGN_VIEWS_FORMATS_REDUCE = '_sum'
 
-    __DESIGN_VIEWS_MUSIC_MAP = """function(doc) {
+    __DESIGN_VIEWS_SOUND_MAP = """function(doc) {
   music = ["aac", "ac3", "mp3"];
   for (i=0; i<music.length; i++){
     if(doc.ffprobe.container.format_name == music[i]){
@@ -83,6 +83,61 @@ class Database():
   }
 }"""
 
+    __DESIGN_FULLTEXT_ARTIST_INDEX = """function(doc) { var ret=new Document(); ret.add(doc.ffprobe.tags.artist); return ret; }"""
+
+    __DESIGN_FULLTEXT_EVERYTHING_INDEX = """function(doc) {
+    var ret = new Document();
+
+    function idx(obj) {
+    for (var key in obj) {
+        switch (typeof obj[key]) {
+        case 'object':
+        idx(obj[key]);
+        break;
+        case 'function':
+        break;
+        default:
+        ret.add(obj[key]);
+        break;
+        }
+    }
+    };
+
+    idx(doc);
+
+    if (doc._attachments) {
+    for (var i in doc._attachments) {
+        ret.attachment("default", i);
+    }
+    }
+
+    return ret;
+}"""
+  
+
+    __DESIGN_VIEWS_INDEX_SOUND_MAP = """function(doc) {
+  if(doc.ffprobe.tags.title){
+    if(doc.ffprobe.tags.artist){
+      emit(doc.ffprobe.tags.artist, doc.ffprobe.tags.title);
+    } else {
+      emit(null, doc.ffprobe.tags.title);
+    }
+  } else if(doc.ffprobe.container.filename) {
+    if(doc.ffprobe.tags.artist){
+      emit(doc.ffprobe.tags.artist,
+doc.ffprobe.container.filename);
+    } else {
+      emit(null, doc.ffprobe.container.filename);
+    }
+  } else if (doc.paths[0].path){
+    if(doc.ffprobe.tags.artist){
+      emit(doc.ffprobe.tags.artist, doc.paths[0].path)
+    } else {
+      emit(null, doc.paths[0].path)
+    }
+  }
+}"""
+
     def create_views(self):
         """creates views and saves them to the database"""
         views = { '_id': '_design/views',
@@ -95,8 +150,14 @@ class Database():
                 'formats':
                     {'map': self.__DESIGN_VIEWS_FORMATS_MAP,
                     'reduce':self.__DESIGN_VIEWS_FORMATS_REDUCE},
-                'music': {'map': self.__DESIGN_VIEWS_MUSIC_MAP},
+                'sound': {'map': self.__DESIGN_VIEWS_SOUND_MAP},
                 'video': {'map': self.__DESIGN_VIEWS_VIDEO_MAP}
+            },
+            'fulltext': {
+                'artist':
+                    {'index': self.__DESIGN_FULLTEXT_ARTIST_INDEX},
+                'everything':
+                    {'index': self.__DESIGN_FULLTEXT_EVERYTHING_INDEX}
             }
         }
         self.database.create(views)
