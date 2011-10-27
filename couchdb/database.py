@@ -1,10 +1,12 @@
 """Handles couchdb for mis"""
 
+from socket import error as socketerror
 from logging import getLogger
 from couchdb.client import Server
 from couchdb.client import ResourceNotFound
 
 from config import get_config
+from network import test_tcp_connection
 
 LOG = getLogger("mis.database")
 
@@ -172,15 +174,20 @@ doc.ffprobe.container.filename);
         self.server = Server(database_uri)
         try:
             self.server.version()
-        except AttributeError:
+        except AttributeError as error:
             # TODO: This seems like a terrible way to check the
             # connection. Basically, it craps out with an
             # attribute error relating to a makefile and a
             # NoneType. There should be some checking here whether
             # the database is actually offline, or if the library
             # crapped out for another reason.
-            LOG.critical("couchdb cannot be reached at " + database_uri)
-            exit(1)
+            try:
+                test_tcp_connection(host, int(port))
+            except socketerror:
+                LOG.critical("couchdb cannot be reached at " + database_uri)
+                exit(1)
+            else:
+                raise error
         try:
             self.database = self.server[database_name]
         except(ResourceNotFound):

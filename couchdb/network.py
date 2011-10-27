@@ -68,6 +68,11 @@ def b4int(byte_array):
         integer = integer + byte_array[3-i]*(256**i)
     return integer
 
+def test_tcp_connection(hostname, port):
+    """tests whether the couchdb is listening"""
+    test_socket = socket(AF_INET, SOCK_STREAM)
+    print test_socket.connect((hostname, port))
+    
 
 class Connection:
     """Responsible for the connection. Actual network stuff rather
