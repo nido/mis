@@ -175,12 +175,6 @@ doc.ffprobe.container.filename);
         try:
             self.server.version()
         except AttributeError as error:
-            # TODO: This seems like a terrible way to check the
-            # connection. Basically, it craps out with an
-            # attribute error relating to a makefile and a
-            # NoneType. There should be some checking here whether
-            # the database is actually offline, or if the library
-            # crapped out for another reason.
             try:
                 test_tcp_connection(host, int(port))
             except socketerror:
