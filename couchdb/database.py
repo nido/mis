@@ -173,7 +173,7 @@ doc.ffprobe.container.filename);
         database_uri = 'http://' + host + ':' + port + '/'
         self.server = Server(database_uri)
         try:
-            self.server.version()
+            self.server.version
         except AttributeError as error:
             try:
                 test_tcp_connection(host, int(port))
