@@ -14,23 +14,35 @@ LOG = getLogger('mis.main')
 
 def usage():
     """echos how to use this executable"""
+    print "Usage: " + argv[0] + " command option"
     print """
-Please run this program with as argument the folder you wish to index.
-optionally, give a server name, otherwise, the hostname will be used.
+help
+    display this text.
+index [directory]
+    indexes the directory, or ../test_files when no argument is
+    given and adds it to the couchdb database
 """
+
+
+def index():
+    """Indexes a directory"""
+    path = abspath("../test_files")
+    if len(argv) > 2:
+        path = abspath(argv[2])
+    walker = Pathwalker()   
+    walker.evaluate_path(path)
 
 def main():
     """starts the program"""
     init_logging()
 
-    path = abspath("../test_files")
     if len(argv) > 1:
-        path = abspath(argv[1])
-
-    walker = Pathwalker()   
-    walker.evaluate_path(path)
-
-    
+        if argv[1] == 'help':
+            usage()
+        if argv[1] == 'index':
+            index()
+    else:
+        usage()
 
 main()
 

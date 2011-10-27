@@ -171,6 +171,17 @@ doc.ffprobe.container.filename);
         database_uri = 'http://' + host + ':' + port + '/'
         self.server = Server(database_uri)
         try:
+            self.server.version()
+        except AttributeError:
+            # TODO: This seems like a terrible way to check the
+            # connection. Basically, it craps out with an
+            # attribute error relating to a makefile and a
+            # NoneType. There should be some checking here whether
+            # the database is actually offline, or if the library
+            # crapped out for another reason.
+            LOG.critical("couchdb cannot be reached at " + database_uri)
+            exit(1)
+        try:
             self.database = self.server[database_name]
         except(ResourceNotFound):
             # The database didn't exist. Lets create it.
