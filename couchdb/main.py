@@ -23,6 +23,8 @@ help
 index [directory]
     indexes the directory, or ../test_files when no argument is
     given and adds it to the couchdb database
+batch
+    asks you for keys and forces you to input that data for all entries in the database
 """
 
 
@@ -41,9 +43,8 @@ def batch_update():
     meatware.get_fieldnames()
     for x in database.iterate_all_files():
         if len(x) == 128:
-            y = database.get_document(x)
             userdict = meatware.input_data()
-            database.save_userdata(userdict)
+            database.add_userdata(x, userdict)
         
     
 
@@ -56,6 +57,8 @@ def main():
             usage()
         if argv[1] == 'index':
             index()
+        if argv[1] == 'batch':
+            batch_update()
     else:
         usage()
 

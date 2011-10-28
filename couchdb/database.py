@@ -209,11 +209,10 @@ shasum as an identifier"""
             LOG.error("don't have that document, doesn't exist")
         return result
 
-    def add_userdata(self, shasum, name, data):
+    def add_userdata(self, shasum, data):
         shasum = unicode(shasum)
-        name = unicode(name)
-        from os import getusername
-        user = getusername()
+        from getpass import getuser
+        user = getuser()
         from platform import node
         node = node()
         user_key = node + ':' + user
@@ -224,9 +223,9 @@ shasum as an identifier"""
             if x.has_key('userdata'):
                 userdatalist = x['userdata']
             if userdatalist.has_key(user_key):
-                userdata = userdatalist[userkey]
+                userdata = userdatalist[user_key]
             userdata.update(data)
-            userdatalist[userkey] = userdata
+            userdatalist[user_key] = userdata
             x['userdata'] = userdatalist
             self.database[shasum]=x
             
