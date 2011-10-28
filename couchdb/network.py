@@ -70,8 +70,15 @@ def b4int(byte_array):
 
 def test_tcp_connection(hostname, port):
     """tests whether the couchdb is listening"""
-    test_socket = socket(AF_INET, SOCK_STREAM)
-    print test_socket.connect((hostname, port))
+    result = True
+    try:
+        test_socket = socket(AF_INET, SOCK_STREAM)
+        test_socket.connect((hostname, port))
+        test_socket.close()
+    except socketerror:
+        result = False
+    return result
+        
     
 
 class Connection:
@@ -184,7 +191,7 @@ class TCPClient:
         try:
             self.socket.connect((self.host, self.port))
             return Connection(self.socket, self.host)
-        except oserror:
+        except oserror as error:
             LOG.info("Connection refused to " + self.host + ":"
                     + str(self.port))
             LOG.info(error)

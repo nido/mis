@@ -80,8 +80,6 @@ in the configuration."""
         ffprobe = Prober(filename)
         ffprobe_data = ffprobe.get_properties()
         shasum = self.database.path_exists(self.nodename, filename)
-        db_entry = self.database.get_document(shasum)
         self.database.add_data(shasum, 'ffprobe', ffprobe_data)
-        # TODO: else update?
         
 # vim: set tabstop=4 expandtab textwidth=66: #

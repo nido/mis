@@ -3,7 +3,6 @@
     initiates the appropriate backend command (probably network,
     database or maybe probe)"""
 from logging import getLogger
-from os.path import abspath
 
 LOG = getLogger('mis.commands')
 
@@ -37,7 +36,6 @@ def get_command(function):
 
 def get_local_file(filename):
     """Returns the file data from the file."""
-    # TODO: make working again
     pass
     #filedata = None
     #filename = str(filename)

@@ -108,4 +108,5 @@ python's very own ConfigParser."""
             user_file = open(self.user_filename,'w')
             self.userconfig.write(user_file)
             user_file.close()
+
 # vim: set textwidth=66 ts=4 expandtab: #

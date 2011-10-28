@@ -80,7 +80,7 @@ def set_loglevels():
                 LOG.error("The config states an illegal loglevel for "
                         + section)
             else:
-                LOG.info("setting custom loglevel " +
+                LOG.debug("setting custom loglevel " +
                         LVL_STR[loglevel] + " for " + setting)
                 getLogger(setting).setLevel(loglevel)
 

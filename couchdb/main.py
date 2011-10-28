@@ -7,6 +7,8 @@ from logging import getLogger
 
 from log import init_logging
 from pathwalker import Pathwalker
+from consoleinput import consoleinput
+from database import Database
 
 # Initialise logging
 LOG = getLogger('mis.main')
@@ -31,6 +33,19 @@ def index():
         path = abspath(argv[2])
     walker = Pathwalker()   
     walker.evaluate_path(path)
+
+def batch_update():
+    """does a batch update through the console"""
+    database = Database()
+    meatware = consoleinput()
+    meatware.get_fieldnames()
+    for x in database.iterate_all_files():
+        if len(x) == 128:
+            y = database.get_document(x)
+            userdict = meatware.input_data()
+            database.save_userdata(userdict)
+        
+    
 
 def main():
     """starts the program"""

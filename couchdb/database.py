@@ -1,6 +1,5 @@
 """Handles couchdb for mis"""
 
-from socket import error as socketerror
 from logging import getLogger
 from couchdb.client import Server
 from couchdb.client import ResourceNotFound
@@ -9,6 +8,7 @@ from config import get_config
 from network import test_tcp_connection
 
 LOG = getLogger("mis.database")
+CONFIG = get_config()
 
 def template_replace(template, replace):
     """Takes a template and replaces the the keys in the replace
@@ -85,7 +85,11 @@ class Database():
   }
 }"""
 
-    __DESIGN_FULLTEXT_ARTIST_INDEX = """function(doc) { var ret=new Document(); ret.add(doc.ffprobe.tags.artist); return ret; }"""
+    __DESIGN_FULLTEXT_ARTIST_INDEX = """function(doc) {
+  var ret=new Document();
+  ret.add(doc.ffprobe.tags.artist);
+  return ret;
+}"""
 
     __DESIGN_FULLTEXT_EVERYTHING_INDEX = """function(doc) {
     var ret = new Document();
@@ -167,17 +171,15 @@ doc.ffprobe.container.filename);
     def __init__(self):
         """Initialises a new connection to couch and
         creates a new mis databse if nonexistent"""
-        database_name = get_config().get('couchdb', 'database')
-        host = get_config().get('couchdb', 'hostname')
-        port = get_config().get('couchdb', 'port')
+        database_name = CONFIG.get('couchdb', 'database')
+        host = CONFIG.get('couchdb', 'hostname')
+        port = CONFIG.get('couchdb', 'port')
         database_uri = 'http://' + host + ':' + port + '/'
         self.server = Server(database_uri)
         try:
             self.server.version
         except AttributeError as error:
-            try:
-                test_tcp_connection(host, int(port))
-            except socketerror:
+            if not test_tcp_connection(host, int(port)):
                 LOG.critical("couchdb cannot be reached at " + database_uri)
                 exit(1)
             else:
@@ -189,6 +191,14 @@ doc.ffprobe.container.filename);
             self.database = self.server.create(database_name)
             self.create_views()
 
+    def iterate_all_files(self):
+        """With a big database, this is probably a bad idea. Some
+yielding thing may be handier for iterating through everything,
+but that is a concern for later."""
+        # TODO: update for what it says above
+        for x in self.database:
+            yield(x)
+
     def get_document(self, shasum):
         """extracts a (full) document from the database using the
 shasum as an identifier"""
@@ -198,6 +208,30 @@ shasum as an identifier"""
         except ResourceNotFound:
             LOG.error("don't have that document, doesn't exist")
         return result
+
+    def add_userdata(self, shasum, name, data):
+        shasum = unicode(shasum)
+        name = unicode(name)
+        from os import getusername
+        user = getusername()
+        from platform import node
+        node = node()
+        user_key = node + ':' + user
+        userdata = {}
+        if self.file_exists(shasum):
+            x = self.database[shasum]
+            userdatalist = {} 
+            if x.has_key('userdata'):
+                userdatalist = x['userdata']
+            if userdatalist.has_key(user_key):
+                userdata = userdatalist[userkey]
+            userdata.update(data)
+            userdatalist[userkey] = userdata
+            x['userdata'] = userdatalist
+            self.database[shasum]=x
+            
+                
+        
 
     def add_data(self, shasum, name, data):
         """adds data to a record"""
@@ -251,6 +285,7 @@ shasum as an identifier"""
         key = [node, path]
         results = self.database.view('views/paths', key = key)
         if(len(results) > 0):
-            return results.rows[0]['value']
+            result = results.rows[0]['value']
+        return result
 		
 # vim: set tabstop=4 expandtab textwidth=66: #
