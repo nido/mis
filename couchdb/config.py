@@ -12,6 +12,8 @@ files.
 """
 from os.path import expanduser
 from os.path import exists
+from os.path import dirname
+from os import makedirs
 from logging import getLogger
 
 from ConfigParser import SafeConfigParser
@@ -72,6 +74,9 @@ python's very own ConfigParser."""
         self.userconfig = SafeConfigParser()
         self.read = self._parser.read([self.system_file, self.user_filename])
         if not exists(self.user_filename):
+            if not exists(dirname(self.user_filename)):
+                #TODO CREATE DIR
+                makedirs(dirname(self.user_filename))
             self._parser.write(open(self.user_filename,'w'))
         self.userconfig.read([self.user_filename])
         LOG.info("Configuration initialised")
