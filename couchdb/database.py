@@ -10,22 +10,13 @@ from network import test_tcp_connection
 LOG = getLogger("mis.database")
 CONFIG = get_config()
 
-def template_replace(template, replace):
-    """Takes a template and replaces the the keys in the replace
-    fictionary with the values"""
-    function = template
-    for key in replace:
-        value = replace[key]
-        function = function.replace('{{' + key + '}}', value)
-    return function
-
 class DatabaseError(Exception):
     """Error signifying something is wrong with the database"""
     def __init__(self, value):
         """initialises the error"""
         Exception.__init__(self, value)
         self.value = value
-        LOG.debug(value)
+        LOG.debug('DatabaseError generated: ' + value)
     def __str__(self):
         """returns the string representation of the error"""
         return repr(self.value)
