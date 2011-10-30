@@ -70,7 +70,7 @@ in the configuration."""
 
     def add_file(self, filename):
         """A function which adds a file to the database"""
-        if not self.database.path_exists(self.nodename, filename):
+        if not self.database.path_exists(filename,self.nodename):
             LOG.info("inserting " + filename)
             shasum = sha512(open(filename).read()).hexdigest()
             self.database.add_path(shasum, self.nodename, filename)
@@ -79,7 +79,7 @@ in the configuration."""
         """Adds ffprobe data to the database"""
         ffprobe = Prober(filename)
         ffprobe_data = ffprobe.get_properties()
-        shasum = self.database.path_exists(self.nodename, filename)
+        shasum = self.database.path_exists(filename, self.nodename)
         self.database.add_data(shasum, 'ffprobe', ffprobe_data)
         
 # vim: set tabstop=4 expandtab textwidth=66: #

@@ -104,6 +104,7 @@ iterates through every single document."""
     def get_document(self, shasum):
         """extracts a (full) document from the database using the
 shasum as an identifier"""
+        assert shasum != None
         LOG.debug('getting document')
         result = None
         try:
@@ -136,6 +137,7 @@ shasum as an identifier"""
 
     def add_data(self, shasum, name, data):
         """adds data to a record"""
+        assert shasum != None
         shasum = unicode(shasum)
         name = unicode(name)
         LOG.debug('adding data')
@@ -152,6 +154,7 @@ shasum as an identifier"""
 
     def add_path(self, shasum, node, path):
         """Adds a path to the database"""
+        assert shasum != None
         shasum = unicode(shasum)
         node = unicode(node)
         path = unicode(path)
@@ -168,6 +171,7 @@ shasum as an identifier"""
     def file_exists(self, shasum):
         """Checks if a file (shasum) exists in the database, and
         returns the entry when found"""
+        assert shasum != None
         shasum = unicode(shasum)
         result = None
         LOG.debug('checking if file exists: ' + shasum)
@@ -177,7 +181,7 @@ shasum as an identifier"""
             self.database[shasum]  # pylint: disable-msg=W0104
             result = shasum
         except ResourceNotFound:
-            pass # expected
+            LOG.debug('trying to find nonexistent entry ' + shasum)
         return result
 
     def path_exists(self, path, node=None):
