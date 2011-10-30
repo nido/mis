@@ -3,6 +3,8 @@
 from logging import getLogger
 from couchdb.client import Server
 from couchdb.client import ResourceNotFound
+from platform import node as platform_node
+from getpass import getuser
 
 from config import get_config
 from network import test_tcp_connection
@@ -25,17 +27,25 @@ class Database():
     """The Database class incorperates functions you wish to ask
     the database"""
 
-    __DESIGN_VIEWS_PATHS_MAP = file('../javascript/design_views_paths_map.js').read()
-    __DESIGN_VIEWS_SHASUMS_MAP = file('../javascript/design_views_shasums_map.js').read()
-    __DESIGN_VIEWS_FORMATS_MAP = file('../javascript/design_views_formats_map.js').read()
+    __DESIGN_VIEWS_PATHS_MAP = \
+            file('../javascript/design_views_paths_map.js').read()
+    __DESIGN_VIEWS_SHASUMS_MAP = \
+            file('../javascript/design_views_shasums_map.js').read()
+    __DESIGN_VIEWS_FORMATS_MAP = \
+            file('../javascript/design_views_formats_map.js').read()
     __DESIGN_VIEWS_FORMATS_REDUCE = '_sum'
-    __DESIGN_VIEWS_SOUND_MAP = file('../javascript/design_views_sound_map.js').read()
-    __DESIGN_VIEWS_VIDEO_MAP = file('../javascript/design_views_sound_map.js').read()
-    __DESIGN_FULLTEXT_ARTIST_INDEX = file('../javascript/design_fulltext_artist_index.js').read()
-    __DESIGN_FULLTEXT_EVERYTHING_INDEX = file('../javascript/design_fulltext_artist_index.js').read()
+    __DESIGN_VIEWS_SOUND_MAP = \
+            file('../javascript/design_views_sound_map.js').read()
+    __DESIGN_VIEWS_VIDEO_MAP = \
+            file('../javascript/design_views_sound_map.js').read()
+    __DESIGN_FULLTEXT_ARTIST_INDEX = \
+            file('../javascript/design_fulltext_artist_index.js').read()
+    __DESIGN_FULLTEXT_EVERYTHING_INDEX = \
+            file('../javascript/design_fulltext_artist_index.js').read()
 
     def create_views(self):
         """creates views and saves them to the database"""
+        LOG.info('creating views')
         views = { '_id': '_design/views',
             'language': 'javascript',
             'views': {
@@ -61,6 +71,7 @@ class Database():
     def __init__(self):
         """Initialises a new connection to couch and
         creates a new mis databse if nonexistent"""
+        LOG.info('initialising database')
         database_name = CONFIG.get('couchdb', 'database')
         host = CONFIG.get('couchdb', 'hostname')
         port = CONFIG.get('couchdb', 'port')
@@ -73,25 +84,27 @@ class Database():
                 LOG.critical("couchdb cannot be reached at " + database_uri)
                 exit(1)
             else:
+                LOG.error('unknown AttributeError thrown')
                 raise error
         try:
+            LOG.debug('opening database')
             self.database = self.server[database_name]
         except(ResourceNotFound):
+            LOG.info('creating database')
             # The database didn't exist. Lets create it.
             self.database = self.server.create(database_name)
             self.create_views()
 
     def iterate_all_files(self):
-        """With a big database, this is probably a bad idea. Some
-yielding thing may be handier for iterating through everything,
-but that is a concern for later."""
-        # TODO: update for what it says above
-        for x in self.database:
-            yield(x)
+        """With a big database, this is probably a bad idea. this
+iterates through every single document."""
+        for entry in self.database:
+            yield(entry)
 
     def get_document(self, shasum):
         """extracts a (full) document from the database using the
 shasum as an identifier"""
+        LOG.debug('getting document')
         result = None
         try:
             result = self.database[shasum]
@@ -100,32 +113,32 @@ shasum as an identifier"""
         return result
 
     def add_userdata(self, shasum, data):
+        """Adds userdata to the database shasum"""
+        LOG.debug('add userdata')
         shasum = unicode(shasum)
-        from getpass import getuser
         user = getuser()
-        from platform import node
-        node = node()
+        node = platform_node()
         user_key = node + ':' + user
         userdata = {}
-        if self.file_exists(shasum):
-            x = self.database[shasum]
-            userdatalist = {} 
-            if x.has_key('userdata'):
-                userdatalist = x['userdata']
-            if userdatalist.has_key(user_key):
-                userdata = userdatalist[user_key]
-            userdata.update(data)
-            userdatalist[user_key] = userdata
-            x['userdata'] = userdatalist
-            self.database[shasum]=x
-            
-                
-        
+        if not self.file_exists(shasum):
+            LOG.error('trying to add userdata to nonexistent file' + shasum)
+            return None
+        entry = self.database[shasum]
+        userdatalist = {} 
+        if entry.has_key('userdata'):
+            userdatalist = entry['userdata']
+        if userdatalist.has_key(user_key):
+            userdata = userdatalist[user_key]
+        userdata.update(data)
+        userdatalist[user_key] = userdata
+        entry['userdata'] = userdatalist
+        self.database[shasum] = entry
 
     def add_data(self, shasum, name, data):
         """adds data to a record"""
         shasum = unicode(shasum)
         name = unicode(name)
+        LOG.debug('adding data')
         if self.file_exists(shasum):
             mis_file = self.database[shasum]
             if not mis_file.has_key(name) or mis_file[name] != data:
@@ -142,6 +155,7 @@ shasum as an identifier"""
         shasum = unicode(shasum)
         node = unicode(node)
         path = unicode(path)
+        LOG.debug('adding path ' + path + " to " + shasum)
         path_info = {'node': node, 'path': path}
         if self.file_exists(shasum):
             mis_file = self.database[shasum]
@@ -156,6 +170,7 @@ shasum as an identifier"""
         returns the entry when found"""
         shasum = unicode(shasum)
         result = None
+        LOG.debug('checking if file exists: ' + shasum)
         try:
             # Note: the following line triggers the
             # ResourceNotFound if the sha is not known
@@ -165,11 +180,14 @@ shasum as an identifier"""
             pass # expected
         return result
 
-    def path_exists(self, node, path):
+    def path_exists(self, path, node=None):
         """Checks whether a certain path exists and returns True
         or False"""
+        if (node == None):
+            node = platform_node
         node = unicode(node)
         path = unicode(path)
+        LOG.debug('path exists: ' + node + ':' + path)
         result = None
         key = [node, path]
         results = self.database.view('views/paths', key = key)

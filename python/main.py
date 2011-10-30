@@ -7,7 +7,7 @@ from logging import getLogger
 
 from log import init_logging
 from pathwalker import Pathwalker
-from consoleinput import consoleinput
+from consoleinput import Consoleinput
 from database import Database
 
 # Initialise logging
@@ -39,12 +39,12 @@ def index():
 def batch_update():
     """does a batch update through the console"""
     database = Database()
-    meatware = consoleinput()
+    meatware = Consoleinput()
     meatware.get_fieldnames()
-    for x in database.iterate_all_files():
-        if len(x) == 128:
+    for entry in database.iterate_all_files():
+        if len(entry) == 128:
             userdict = meatware.input_data()
-            database.add_userdata(x, userdict)
+            database.add_userdata(entry, userdict)
         
     
 

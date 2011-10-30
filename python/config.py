@@ -75,7 +75,6 @@ python's very own ConfigParser."""
         self.read = self._parser.read([self.system_file, self.user_filename])
         if not exists(self.user_filename):
             if not exists(dirname(self.user_filename)):
-                #TODO CREATE DIR
                 makedirs(dirname(self.user_filename))
             self._parser.write(open(self.user_filename,'w'))
         self.userconfig.read([self.user_filename])

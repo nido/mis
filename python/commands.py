@@ -3,6 +3,8 @@
     initiates the appropriate backend command (probably network,
     database or maybe probe)"""
 from logging import getLogger
+from os.path import abspath
+from os.path import exists
 
 LOG = getLogger('mis.commands')
 
@@ -36,14 +38,14 @@ def get_command(function):
 
 def get_local_file(filename):
     """Returns the file data from the file."""
-    pass
-    #filedata = None
-    #filename = str(filename)
-    #if file_exists(abspath(filename)):
-    #    filedata = open(filename, 'r').read()
-    #else:
-    #    LOG.error("No file found at " + filename)
-    #return filedata
+    #TODO: use the database?
+    filedata = None
+    filename = str(filename)
+    if exists(abspath(filename)):
+        filedata = open(abspath(filename), 'r').read()
+    else:
+        LOG.error("No file found at " + filename)
+    return filedata
         
 COMMAND_DICT = {
     'get filedata': get_local_file

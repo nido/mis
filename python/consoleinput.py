@@ -1,5 +1,5 @@
 """ temp class for raw input"""
-class consoleinput:
+class Consoleinput:
     """class holding it"""
     def __init__(self):
         self.fields = []
