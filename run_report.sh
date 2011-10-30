@@ -23,6 +23,7 @@ function analyser(){
 
 }
 
+cd python
 for x in test_*.py; do
     MODNAME=`echo $x | sed "s/^test_//" | sed "s/.py$//"`
     if ! exists coverage
@@ -53,4 +54,5 @@ then
     done
     coverage html
 fi
+cd -
 # vim: set tabstop=4 expandtab textwidth=66: #

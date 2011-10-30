@@ -25,115 +25,14 @@ class Database():
     """The Database class incorperates functions you wish to ask
     the database"""
 
-    __DESIGN_VIEWS_PATHS_MAP = """function(doc){
-  for(i=0; i<doc.paths.length; i++){
-      entry = doc.paths[i]
-      key = [entry.node, entry.path]
-      if(entry.node && entry.path){
-        emit(key, doc._id)
-      }
-  }
-}"""
-
-    __DESIGN_VIEWS_SHASUMS_MAP = """function(doc){
-    emit(doc._id)
-}"""
-
-    __DESIGN_VIEWS_FORMATS_MAP = """function(doc) {
-  if(doc.ffprobe.container.format_name){
-    emit(doc.ffprobe.container.format_name, 1);
-  }
-}"""
-
+    __DESIGN_VIEWS_PATHS_MAP = file('../javascript/design_views_paths_map.js').read()
+    __DESIGN_VIEWS_SHASUMS_MAP = file('../javascript/design_views_shasums_map.js').read()
+    __DESIGN_VIEWS_FORMATS_MAP = file('../javascript/design_views_formats_map.js').read()
     __DESIGN_VIEWS_FORMATS_REDUCE = '_sum'
-
-    __DESIGN_VIEWS_SOUND_MAP = """function(doc) {
-  music = ["aac", "ac3", "mp3"];
-  for (i=0; i<music.length; i++){
-    if(doc.ffprobe.container.format_name == music[i]){
-      emit(doc, music[i]);
-    }
-  }
-}"""
-
-    __DESIGN_VIEWS_VIDEO_MAP = """function(doc) {
-  video = ["asf", "avi", "flv", "h263", "matroska,webm",
-"mov,mp4,m4a,3gp,3g2,mj2", "mpeg"];
-  for (i=0; i<video.length; i++){
-    if(doc.ffprobe.container.format_name == video[i]){
-      emit(doc);
-    }
-  }
-}"""
-
-    __DESIGN_VIEWS_VIDEO_MAP = """function(doc) {
-  if(doc.ffprobe.tags.title){
-    emit(doc.ffprobe.tags.title);
-  } else if(doc.ffprobe.container.filename) {
-    emit(doc.ffprobe.container.filename);
-  } else {
-    emit(doc.paths[0].path)
-  }
-}"""
-
-    __DESIGN_FULLTEXT_ARTIST_INDEX = """function(doc) {
-  var ret=new Document();
-  ret.add(doc.ffprobe.tags.artist);
-  return ret;
-}"""
-
-    __DESIGN_FULLTEXT_EVERYTHING_INDEX = """function(doc) {
-    var ret = new Document();
-
-    function idx(obj) {
-    for (var key in obj) {
-        switch (typeof obj[key]) {
-        case 'object':
-        idx(obj[key]);
-        break;
-        case 'function':
-        break;
-        default:
-        ret.add(obj[key]);
-        break;
-        }
-    }
-    };
-
-    idx(doc);
-
-    if (doc._attachments) {
-    for (var i in doc._attachments) {
-        ret.attachment("default", i);
-    }
-    }
-
-    return ret;
-}"""
-  
-
-    __DESIGN_VIEWS_INDEX_SOUND_MAP = """function(doc) {
-  if(doc.ffprobe.tags.title){
-    if(doc.ffprobe.tags.artist){
-      emit(doc.ffprobe.tags.artist, doc.ffprobe.tags.title);
-    } else {
-      emit(null, doc.ffprobe.tags.title);
-    }
-  } else if(doc.ffprobe.container.filename) {
-    if(doc.ffprobe.tags.artist){
-      emit(doc.ffprobe.tags.artist,
-doc.ffprobe.container.filename);
-    } else {
-      emit(null, doc.ffprobe.container.filename);
-    }
-  } else if (doc.paths[0].path){
-    if(doc.ffprobe.tags.artist){
-      emit(doc.ffprobe.tags.artist, doc.paths[0].path)
-    } else {
-      emit(null, doc.paths[0].path)
-    }
-  }
-}"""
+    __DESIGN_VIEWS_SOUND_MAP = file('../javascript/design_views_sound_map.js').read()
+    __DESIGN_VIEWS_VIDEO_MAP = file('../javascript/design_views_sound_map.js').read()
+    __DESIGN_FULLTEXT_ARTIST_INDEX = file('../javascript/design_fulltext_artist_index.js').read()
+    __DESIGN_FULLTEXT_EVERYTHING_INDEX = file('../javascript/design_fulltext_artist_index.js').read()
 
     def create_views(self):
         """creates views and saves them to the database"""

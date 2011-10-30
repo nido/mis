@@ -129,8 +129,7 @@ cleanup:
 extensions:
     collections (of one episode, series, series of series, universes)
     `watched' list
-    double signature checker
-    connect to external instance
+    -connect to external instance
         up/download files
     talk to the admin (missing/double files, other problems)
     redundant jbod storage usage/detection
