@@ -7,10 +7,21 @@ from platform import node as platform_node
 from getpass import getuser
 
 from config import get_config
-from network import test_tcp_connection
 
 LOG = getLogger("mis.database")
 CONFIG = get_config()
+
+def test_tcp_connection(hostname, port):
+    """tests whether the couchdb is listening"""
+    result = True
+    try:
+        test_socket = socket(AF_INET, SOCK_STREAM)
+        test_socket.connect((hostname, port))
+        test_socket.close()
+    except socketerror:
+        result = False
+    return result
+        
 
 class DatabaseError(Exception):
     """Error signifying something is wrong with the database"""

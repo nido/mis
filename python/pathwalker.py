@@ -70,7 +70,7 @@ in the configuration."""
 
     def add_file(self, filename):
         """A function which adds a file to the database"""
-        if not self.database.path_exists(filename,self.nodename):
+        if not self.database.path_exists(filename, self.nodename):
             LOG.info("inserting " + filename)
             shasum = sha512(open(filename).read()).hexdigest()
             self.database.add_path(shasum, self.nodename, filename)
