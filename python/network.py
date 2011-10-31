@@ -131,7 +131,7 @@ class Connection:
 
         packet = bytearray(packet)
         packet_size = b4int(packet)
-        print "packet size " + str(packet_size)
+        LOG.debug "packet size " + str(packet_size)
         packet = packet + bytearray(self.socket.recv(packet_size))
         LOG.debug('received transaction ' +
                 str(b4int(packet[4:8])))
