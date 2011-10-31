@@ -6,6 +6,8 @@ from logging import getLogger
 from os.path import abspath
 from os.path import exists
 
+from database import Database
+
 LOG = getLogger('mis.commands')
 
 def get_function(string):
@@ -36,9 +38,13 @@ def get_command(function):
             break
     return result
 
-def get_local_file(filename):
+def get_filedata(shasum):
+    """Gives the contents of said shasum"""
+    #TODO: implement
+    pass
+
+def _get_local_file(filename):
     """Returns the file data from the file."""
-    #TODO: use the database?
     filedata = None
     filename = str(filename)
     if exists(abspath(filename)):
@@ -48,7 +54,7 @@ def get_local_file(filename):
     return filedata
         
 COMMAND_DICT = {
-    'get filedata': get_local_file
+    'get filedata': get_filedata
 }
 
 # vim: set tabstop=4 expandtab textwidth=66 foldmethod=indent: #
