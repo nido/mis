@@ -5,8 +5,9 @@ This file is out of date, this is now done with couchdb. see couch directory for
 
 Needed packages:
 - python
-- Python-MySQL (fedora: MySQL-python) <-- not anymore
 - python-couchdb
+- python-chardet
+- ffprobe (ffmpeg on fedora)
 
 This is an attempt to make it feasable to handle media libraries
 of ridiculous proportions. Because of that, it uses a library of
@@ -77,6 +78,23 @@ implemented to allow later versions of the protocol and negotiation
 on which version to use, in order to allow extensions in the future
 SSL encryption should be
 used as well in order to further guarantee integrity of the bitsream.
+
+
+commands
+========
+Commands are central to the operation of mis. It is where local and
+remote users access the system. Credentials need to be assessed here,
+although validation and recording can happen elsewhere.
+
+list all:
+    Debugging function giving all known shasums within the system,
+    should be disabled when deployed.
+get filedata:
+    Returns the data of the shasum following the command
+get metadata:
+    Returns all metadata known for said shasum
+add metadata:
+    Adds metadata to the database
 
 configuration
 =============
@@ -150,4 +168,4 @@ usually contain a title but are not uniquely identifiable by it.
 Okay. Back to reality. The container kinda meta-is the media. it
 contains info we want
 
-# vim: set tabstop=4 expandtab: #
+# vim: set tabstop=4 expandtab textwidth=72: #
