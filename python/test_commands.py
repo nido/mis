@@ -7,8 +7,9 @@ from unittest import main
 
 from commands import get_function
 from commands import get_command
-from commands import get_local_file
+from commands import get_filedata
 from log import init_logging
+from pathwalker import Pathwalker
 
 def invalid_function():
     pass
@@ -24,7 +25,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         command_string = "get filedatabla"
         # get a valid function
         self.assertEqual(get_function(command_string),
-                (get_local_file, "bla"))
+                (get_filedata, "bla"))
         # get an invalid function
         self.assertEqual(get_function('invalid command'), None)
 
@@ -32,13 +33,20 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         """tests if the get_command method works"""
         command_string = "get filedata"
         # get an existing command
-        self.assertEqual(get_command(get_local_file),
+        self.assertEqual(get_command(get_filedata),
                 command_string)
         # get an illegal command
         self.assertEqual(get_command(invalid_function), None)
 
-#    def test_get_local_file(self):
-#        """tests if the get_local_file method works"""
+    def test_get_filedata(self):
+        """Tests the filedata extractor"""
+        # get check data
+        filedata = file('../test_files/test.avi').read()
+        from hashlib import sha512 # pylint: disable-msg=E0611
+        shasum = sha512(filedata).hexdigest()
+        # add to database
+        Pathwalker().evaluate_path('../test_files')
+        self.assertEqual(get_filedata(shasum), filedata)
 
 if __name__ == '__main__':
     main()

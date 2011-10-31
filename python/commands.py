@@ -5,6 +5,7 @@
 from logging import getLogger
 from os.path import abspath
 from os.path import exists
+from platform import node
 
 from database import Database
 
@@ -40,8 +41,15 @@ def get_command(function):
 
 def get_filedata(shasum):
     """Gives the contents of said shasum"""
-    #TODO: implement
-    pass
+    # TODO: IMPLEMENT
+    result = None
+    document = Database().get_document(shasum)
+    for path in document['paths']:
+        if (path['node'] == node() and
+                exists(path['path'])):
+            result = file(path['path']).read()
+            break # break out of for path
+    return result
 
 def _get_local_file(filename):
     """Returns the file data from the file."""
