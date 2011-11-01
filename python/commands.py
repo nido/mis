@@ -76,10 +76,24 @@ def _get_local_file(filename):
     else:
         LOG.error("No file found at " + filename)
     return filedata
+
+def usage(arg = None):
+    """echos how to use this executable"""
+    print """
+help
+    display this text.
+index [directory]
+    indexes the directory, or ../test_files when no argument is
+    given and adds it to the couchdb database
+batch
+    asks you for keys and forces you to input that data for all entries in the database
+"""
+
         
 COMMAND_DICT = {
     'get filedata': get_filedata,
-    'index': index
+    'index': index,
+    'help': usage
 }
 
 # vim: set tabstop=4 expandtab textwidth=66 foldmethod=indent: #

@@ -23,7 +23,8 @@ function analyser(){
 
 }
 
-cd python
+cd `dirname "$0"`/python
+
 for x in test_*.py; do
     MODNAME=`echo $x | sed "s/^test_//" | sed "s/.py$//"`
     if ! exists coverage
@@ -53,6 +54,8 @@ then
         coverage run -a --branch $x
     done
     coverage html
+    test -d ../documentation/coverage && rm -rf ../documentation/coverage
+    mv htmlcov ../documentation/coverage
 fi
 cd -
 # vim: set tabstop=4 expandtab textwidth=66: #

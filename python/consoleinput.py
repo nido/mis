@@ -1,7 +1,18 @@
 """ temp class for raw input"""
 
 from commands import get_function
+from database import Database
 
+def batch_update():
+    """does a batch update through the console"""
+    database = Database()
+    meatware = Consoleinput()
+    meatware.get_fieldnames()
+    for entry in database.iterate_all_files():
+        if len(entry) == 128:
+            userdict = meatware.input_data()
+            database.add_userdata(entry, userdict)
+        
 class Consoleinput:
     """class holding it"""
     def __init__(self):
@@ -32,7 +43,8 @@ class Console:
     def attach(self):
         """emulated 'attaching'. basically, it just asks input and
 executes it in a while(true) loop"""
-        while(True):
+        value = True
+        while(value):
             print ""
             text = raw_input('# ')
             args = text.split(' ', 1)
@@ -44,7 +56,13 @@ executes it in a while(true) loop"""
             if function:
                 x = function(argument)
                 print(x)
+            elif text == 'batch':
+                batch_update()
+            elif text == 'exit':
+                value = False
             else:
                 print "Invalid command: " + text
+            if text == 'help': # add 'exit' to the list hack
+                print 'exit: exit the program'
 
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #
