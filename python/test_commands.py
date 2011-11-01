@@ -8,6 +8,7 @@ from unittest import main
 from commands import get_function
 from commands import get_command
 from commands import get_filedata
+from commands import _get_local_file
 from log import init_logging
 from pathwalker import Pathwalker
 
@@ -25,7 +26,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         command_string = "get filedatabla"
         # get a valid function
         self.assertEqual(get_function(command_string),
-                (get_filedata, "bla"))
+                get_filedata)
         # get an invalid function
         self.assertEqual(get_function('invalid command'), None)
 
@@ -47,6 +48,16 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         # add to database
         Pathwalker().evaluate_path('../test_files')
         self.assertEqual(get_filedata(shasum), filedata)
+        # text nonexistent file fetch
+        self.assertEqual(get_filedata('invalid_doc'), None)
+
+    def test__get_local_file(self):
+        """Tests if _get_local_file works correctly"""
+        filedata = file('../test_files/test.avi').read()
+        test = _get_local_file('../test_files/test.avi')
+        self.assertEqual(test, filedata)
+        # text nonexistent file
+        self.assertEqual(_get_local_file(''), None)
 
 if __name__ == '__main__':
     main()

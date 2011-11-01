@@ -1,4 +1,8 @@
 """Handles couchdb for mis"""
+from socket import socket
+from socket import error as socketerror
+from socket import AF_INET
+from socket import SOCK_STREAM
 
 from logging import getLogger
 from couchdb.client import Server
@@ -116,12 +120,16 @@ iterates through every single document."""
         """extracts a (full) document from the database using the
 shasum as an identifier"""
         assert shasum != None
+        assert shasum != ''
         LOG.debug('getting document')
         result = None
         try:
             result = self.database[shasum]
-        except ResourceNotFound:
-            LOG.error("don't have that document, doesn't exist")
+            # make sure it actually exists
+            
+        except (ResourceNotFound) as error:
+            LOG.error("don't have that document, doesn't exist:" +
+                    str(error))
         return result
 
     def add_userdata(self, shasum, data):

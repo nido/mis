@@ -6,9 +6,10 @@ from os.path import abspath
 from logging import getLogger
 
 from log import init_logging
-from pathwalker import Pathwalker
 from consoleinput import Consoleinput
+from consoleinput import Console
 from database import Database
+from commands import index
 
 # Initialise logging
 LOG = getLogger('mis.main')
@@ -25,16 +26,10 @@ index [directory]
     given and adds it to the couchdb database
 batch
     asks you for keys and forces you to input that data for all entries in the database
+console
+    starts console session
 """
 
-
-def index():
-    """Indexes a directory"""
-    path = abspath("../test_files")
-    if len(argv) > 2:
-        path = abspath(argv[2])
-    walker = Pathwalker()   
-    walker.evaluate_path(path)
 
 def batch_update():
     """does a batch update through the console"""
@@ -56,9 +51,15 @@ def main():
         if argv[1] == 'help':
             usage()
         if argv[1] == 'index':
-            index()
+            path = '../test_files'
+            if len(argv) > 2:
+                path = abspath(argv[2])
+            index(path)
         if argv[1] == 'batch':
             batch_update()
+        if argv[1] == 'console':
+            console = Console()
+            console.attach()
     else:
         usage()
 

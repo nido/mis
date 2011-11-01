@@ -1,4 +1,7 @@
 """ temp class for raw input"""
+
+from commands import get_function
+
 class Consoleinput:
     """class holding it"""
     def __init__(self):
@@ -20,4 +23,28 @@ class Consoleinput:
             result[field] = answer
         return result
             
+class Console:
+    """Class for inputting commands into mis directly."""
+    def __init__(self):
+        """create the class"""
+        print "Media Information System - Console"
+
+    def attach(self):
+        """emulated 'attaching'. basically, it just asks input and
+executes it in a while(true) loop"""
+        while(True):
+            print ""
+            text = raw_input('# ')
+            args = text.split(' ', 1)
+            command = args[0]
+            argument = None
+            if len(args) == 2:
+                argument = args[1]
+            function = get_function(command)
+            if function:
+                x = function(argument)
+                print(x)
+            else:
+                print "Invalid command: " + text
+
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #
