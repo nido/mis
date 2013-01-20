@@ -16,10 +16,6 @@ from consoleinput import batch_update
 # Initialise logging
 LOG = getLogger('mis.main')
 
-
-
-    
-
 def main():
     """starts the program"""
     init_logging()

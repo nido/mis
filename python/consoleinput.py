@@ -58,6 +58,7 @@ executes it in a while(true) loop"""
                 print(x)
             elif text == 'batch':
                 batch_update()
+
             elif text == 'exit':
                 value = False
             else:

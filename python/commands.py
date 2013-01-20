@@ -80,18 +80,20 @@ def _get_local_file(filename):
 def usage(arg = None):
     """echos how to use this executable"""
     print """
+batch
+    asks you for keys and forces you to input that data for all entries in the database
 help
     display this text.
 index [directory]
     indexes the directory, or ../test_files when no argument is
     given and adds it to the couchdb database
-batch
-    asks you for keys and forces you to input that data for all entries in the database
+readfile path
+    returns the content of a file at path
 """
 
         
 COMMAND_DICT = {
-    'get filedata': get_filedata,
+    'readfile': _get_local_file,
     'index': index,
     'help': usage
 }
