@@ -47,22 +47,21 @@ executes it in a while(true) loop"""
         while(value):
             print ""
             text = raw_input('# ')
-            args = text.split(' ', 1)
-            command = args[0]
             argument = None
-            if len(args) == 2:
-                argument = args[1]
-            function = get_function(command)
-            if function:
-                x = function(argument)
-                print(x)
+            if text == 'exit':
+                command = None
+                value = False
             elif text == 'batch':
                 batch_update()
-
-            elif text == 'exit':
-                value = False
             else:
-                print "Invalid command: " + text
+                command = get_function(text)
+                if command == None:
+                    print "Invalid command: " + text
+                    continue
+                (function,argument) = get_function(text)
+                x = function(argument[1:])
+                if x != None:
+                    print(x)
             if text == 'help': # add 'exit' to the list hack
                 print 'exit: exit the program'
 

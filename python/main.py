@@ -33,8 +33,8 @@ def main():
             batch_update()
     else:
         console = Console()
-        console.attach()
         usage()
+        console.attach()
 
 main()
 

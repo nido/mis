@@ -79,7 +79,9 @@ class Connection:
 
     def rpc_call(self, command):
         """Does a rpc call through the connection and returns the
-        result."""
+        result.
+        Needs a layer where it waits for the right return command
+        and separate the calls from the send/receive functions"""
         if command == None:
             LOG.error("Cannot send empty command")
             return
@@ -94,11 +96,12 @@ class Connection:
         basically means you serve any media file to anyone."""
         command = self._recv()
         cmd = get_function(command)
+        print(cmd)
         if cmd == None:
             LOG.error("Received an invalid command: Aborting. ")
             LOG.error(command)
             return
-        function, arguments = cmd
+        (function, arguments) = cmd
         LOG.info(command[:12] + " - " + str(function) + " - " + arguments)
         result = function(arguments)
         if result == None:

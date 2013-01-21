@@ -18,16 +18,18 @@ def get_function(string):
     """ Returns a tuple containing the string and accompanying
         argument. Returns None on an invalid command"""
     command = None
+    argument = None
     result = None
     for name in COMMAND_DICT:
         if name == string[:len(name)]:
             command = COMMAND_DICT[name]
+            argument = string[len(name):]
             break # optimisation: breakout of for loop
     if command == None:
         LOG.info('received invalid command:')
         LOG.info(string)
     else:
-        result = command
+        result = (command, argument)
     return result
 
 def get_command(function):
