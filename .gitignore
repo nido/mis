@@ -1,3 +1,4 @@
+*.pyc
 # autoreconf
 Makefile.in
 aclocal.m4
