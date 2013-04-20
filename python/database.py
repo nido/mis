@@ -42,21 +42,23 @@ class Database():
     """The Database class incorperates functions you wish to ask
     the database"""
 
+    jsdir = CONFIG.get('couchdb', 'javascript_directory')
+
     __DESIGN_VIEWS_PATHS_MAP = \
-            file('../javascript/design_views_paths_map.js').read()
+            file(jsdir + '/design_views_paths_map.js').read()
     __DESIGN_VIEWS_SHASUMS_MAP = \
-            file('../javascript/design_views_shasums_map.js').read()
+            file(jsdir + '/design_views_shasums_map.js').read()
     __DESIGN_VIEWS_FORMATS_MAP = \
-            file('../javascript/design_views_formats_map.js').read()
+            file(jsdir + '/design_views_formats_map.js').read()
     __DESIGN_VIEWS_FORMATS_REDUCE = '_sum'
     __DESIGN_VIEWS_SOUND_MAP = \
-            file('../javascript/design_views_sound_map.js').read()
+            file(jsdir + '/design_views_sound_map.js').read()
     __DESIGN_VIEWS_VIDEO_MAP = \
-            file('../javascript/design_views_sound_map.js').read()
+            file(jsdir + '/design_views_sound_map.js').read()
     __DESIGN_FULLTEXT_ARTIST_INDEX = \
-            file('../javascript/design_fulltext_artist_index.js').read()
+            file(jsdir + '/design_fulltext_artist_index.js').read()
     __DESIGN_FULLTEXT_EVERYTHING_INDEX = \
-            file('../javascript/design_fulltext_artist_index.js').read()
+            file(jsdir + '/design_fulltext_artist_index.js').read()
 
     def create_views(self):
         """creates views and saves them to the database"""

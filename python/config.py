@@ -52,14 +52,16 @@ blissfully ignorant of the defaultness of said configuration."""
     config.set('loglevels', 'mis.network', 'info')
     config.set('loglevels', 'mis.network.Server_handler.traffic', 'info')
     config.set('loglevels', 'mis.pathwalker', 'info')
+    # default character set
     config.add_section('charsets')
     config.set('charsets', 'filesystem', 'utf8')
     config.set('charsets', 'fallback', 'latin1')
+    # couchdb setup
     config.add_section('couchdb')
     config.set('couchdb', 'database', 'mis')
     config.set('couchdb', 'hostname', 'localhost')
     config.set('couchdb', 'port', '5984')
-
+    config.set('couchdb', 'javascript_directory', 'javascript')
     return config
 
 class Configuration():
