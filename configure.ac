@@ -5,6 +5,6 @@ AM_INIT_AUTOMAKE([foreign])
 
 AM_PATH_PYTHON([2.5])
 
-AC_CONFIG_FILES([Makefile Doxyfile])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
