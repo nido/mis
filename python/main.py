@@ -25,7 +25,7 @@ def main():
         if argv[1] == 'help':
             usage()
         if argv[1] == 'index':
-            path = '../test_files'
+            path = '.'
             if len(argv) > 2:
                 path = abspath(argv[2])
             index(path)
