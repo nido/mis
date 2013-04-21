@@ -1,0 +1,3 @@
+[couchdb]
+javascript_directory = @jsdir@
+
