@@ -1,0 +1,42 @@
+Name:		@PACKAGE_NAME@
+Version:	@PACKAGE_VERSION@
+Release:	1%{?dist}
+Summary:	Media Information System
+
+Group:		Nido/Media
+License:	BSD 3-clause
+URL:		@PACKAGE_URL@
+Source0:	@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
+
+#BuildRequires:	
+#Requires:	
+
+%description
+Media Information System
+
+%prep
+%setup -q
+
+
+%build
+%configure
+make %{?_smp_mflags}
+
+
+%install
+make install DESTDIR=%{buildroot}
+
+
+%files
+%_bindir/mis
+%_libdir/python@PYTHON_VERSION@/site-packages/mis/*.py
+%_libdir/python@PYTHON_VERSION@/site-packages/mis/*.pyc
+%_libdir/python@PYTHON_VERSION@/site-packages/mis/*.pyo
+%_libdir/mis/*.js
+%_sysconfdir/mis.conf
+%doc
+
+
+
+%changelog
+

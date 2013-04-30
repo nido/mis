@@ -1,4 +1,4 @@
-AC_INIT([mis],[0.0.1])
+AC_INIT([mis],[0.0.1], [nido@foxserver.be], [], [https://github.com/nido/mis])
 
 AM_INIT_AUTOMAKE([foreign])
 #AC_CONFIG_MACRO_DIR([m4])
@@ -13,6 +13,6 @@ AC_CHECK_PROG([FFPROBE], [ffprobe], [ffprobe],
 couchdbdir="${libdir}/${PACKAGE}"
 AC_SUBST(couchdbdir)
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile mis.spec])
 
 AC_OUTPUT

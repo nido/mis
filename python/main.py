@@ -36,6 +36,7 @@ def main():
         usage()
         console.attach()
 
-main()
+if __name__ == "__main__":
+    main()
 
 # vim: set tabstop=4 expandtab: #
