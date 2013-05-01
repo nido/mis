@@ -58,10 +58,10 @@ executes it in a while(true) loop"""
                 if command == None:
                     print "Invalid command: " + text
                     continue
-                (function,argument) = get_function(text)
-                x = function(argument[1:])
-                if x != None:
-                    print(x)
+                (function, argument) = get_function(text)
+                result = function(argument[1:])
+                if result != None:
+                    print(result)
             if text == 'help': # add 'exit' to the list hack
                 print 'exit: exit the program'
 

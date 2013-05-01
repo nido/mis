@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""test the networking"""
 from thread import start_new_thread
 from time import sleep
 from log import init_logging
@@ -8,16 +9,19 @@ from network import TCPClient
 
 init_logging()
 
-def server(test):
+def server(instance):
+    """manage the server"""
+    while True:
+        scon = instance.accept()
+        scon.rpc_listen()
 
-	
-	while True:
-		con = test.accept()
-		con.rpc_listen()
-test = TCPServer()
-start_new_thread(server, (test,))
-sleep(1)
-test = TCPClient('127.0.0.1')
-con = test.connect()
-con.rpc_call("help")
+def main():
+    """run the test"""
+    tcpserver = TCPServer()
+    start_new_thread(server, (tcpserver,))
+    sleep(1)
+    test = TCPClient('127.0.0.1')
+    ccon = test.connect()
+    ccon.rpc_call("help")
 
+main()

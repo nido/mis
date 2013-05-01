@@ -6,9 +6,7 @@ from os.path import abspath
 from logging import getLogger
 
 from log import init_logging
-from consoleinput import Consoleinput
 from consoleinput import Console
-from database import Database
 from commands import index
 from commands import usage
 from consoleinput import batch_update

@@ -13,6 +13,7 @@ from log import init_logging
 from pathwalker import Pathwalker
 
 def invalid_function():
+    """no good function that does nothing"""
     pass
 
 class TestCommandModule(TestCase): # pylint: disable-msg=R0904

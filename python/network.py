@@ -43,7 +43,6 @@ used as well in order to further guarantee integrity of the bitsream.
 from os import error as oserror
 from random import randint
 from socket import socket
-from socket import error as socketerror
 from socket import AF_INET
 from socket import SOCK_STREAM
 from socket import SO_REUSEADDR

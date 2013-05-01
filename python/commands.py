@@ -79,7 +79,7 @@ def _get_local_file(filename):
         LOG.error("No file found at " + filename)
     return filedata
 
-def usage(arg = None):
+def usage(arg = None): # pylint: disable-msg=W0613
     """echos how to use this executable"""
     print """
 batch
