@@ -7,7 +7,7 @@ complete media library'. E.g. In case node A makes a big request to
 node B, at the very least node B should be able to take requests from node A.
 
 Because of this, we use a little 'network' protocol within the network protocol.
-The purpose of this protocol is to 'emulate' a bidirectional rcp connections
+The purpose of this protocol is to 'emulate' bidirectional rcp connections
 over a single tcp connection.
 
 the client of the tcp connection is called node A. the server of
@@ -42,11 +42,11 @@ used as well in order to further guarantee integrity of the bitsream.
 
 from os import error as oserror
 from random import randint
-from socket import socket
 from socket import AF_INET
 from socket import SOCK_STREAM
 from socket import SO_REUSEADDR
 from socket import SOL_SOCKET
+from socket import socket as network_socket
 
 from config import get_config
 from commands import get_function
@@ -150,7 +150,7 @@ class TCPServer:
         config = get_config()
         self.host = config.get('network', 'host')
         self.port = int(config.get('network', 'port'))
-        self.socket = socket(AF_INET, SOCK_STREAM)
+        self.socket = network_socket(AF_INET, SOCK_STREAM)
         self.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         LOG.debug('started socket on "' + str(self.host) + '" port "' +
                 str(self.port) + '". binding')
@@ -165,6 +165,10 @@ class TCPServer:
         LOG.info('Got a connection from ' + str(addr))
         return Connection(conn, addr)
 
+    def disconnect(self):
+        """disconnects the socket"""
+        self.socket.close()
+
 class TCPClient:
     """The tcp client creates a tcp connection to the server."""
     
@@ -174,7 +178,7 @@ class TCPClient:
         self.host = host
         if port:
             self.port = port
-        self.socket = socket(AF_INET, SOCK_STREAM)
+        self.socket = network_socket(AF_INET, SOCK_STREAM)
 
 
     def connect(self):
@@ -187,5 +191,9 @@ class TCPClient:
                     + str(self.port))
             LOG.info(error)
             return None
+
+    def disconnect(self):
+        """disconnects the socket"""
+        self.socket.close()
 
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #

@@ -1,5 +1,5 @@
 """Handles couchdb for mis"""
-from socket import socket
+from socket import socket as network_socket
 from socket import error as socketerror
 from socket import AF_INET
 from socket import SOCK_STREAM
@@ -19,7 +19,7 @@ def test_tcp_connection(hostname, port):
     """tests whether the couchdb is listening"""
     result = True
     try:
-        test_socket = socket(AF_INET, SOCK_STREAM)
+        test_socket = network_socket(AF_INET, SOCK_STREAM)
         test_socket.connect((hostname, port))
         test_socket.close()
     except socketerror:
@@ -95,6 +95,8 @@ class Database():
         database_uri = 'http://' + host + ':' + port + '/'
         self.server = Server(database_uri)
         try:
+            # This statement appears to do nothing, but is used to
+            # make sure the database is reachable.
             self.server.version
         except AttributeError as error:
             if not test_tcp_connection(host, int(port)):
@@ -198,7 +200,8 @@ shasum as an identifier"""
         LOG.debug('checking if file exists: ' + shasum)
         try:
             # Note: the following line triggers the
-            # ResourceNotFound if the sha is not known
+            # ResourceNotFound if the sha is not known, this is
+            # the way we catch whether it exists.
             self.database[shasum]  # pylint: disable-msg=W0104
             result = shasum
         except ResourceNotFound:

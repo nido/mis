@@ -34,35 +34,30 @@ class Consoleinput:
             result[field] = answer
         return result
             
-class Console:
-    """Class for inputting commands into mis directly."""
-    def __init__(self):
-        """create the class"""
-        print "Media Information System - Console"
-
-    def attach(self):
-        """emulated 'attaching'. basically, it just asks input and
-executes it in a while(true) loop"""
-        value = True
-        while(value):
-            print ""
-            text = raw_input('# ')
-            argument = None
-            if text == 'exit':
-                command = None
-                value = False
-            elif text == 'batch':
-                batch_update()
-            else:
-                command = get_function(text)
-                if command == None:
-                    print "Invalid command: " + text
-                    continue
-                (function, argument) = get_function(text)
-                result = function(argument[1:])
-                if result != None:
-                    print(result)
-            if text == 'help': # add 'exit' to the list hack
-                print 'exit: exit the program'
+def console():
+    """function for inputting commands into mis directly."""
+    print "Media Information System - Console"
+    print "type help for help"
+    value = True
+    while(value):
+        print ""
+        text = raw_input('# ')
+        argument = None
+        if text == 'exit':
+            command = None
+            value = False
+        elif text == 'batch':
+            batch_update()
+        else:
+            command = get_function(text)
+            if command == None:
+                print "Invalid command: " + text
+                continue
+            (function, argument) = get_function(text)
+            result = function(argument[1:])
+            if result != None:
+                print(result)
+        if text == 'help': # add 'exit' to the list hack
+            print 'exit: exit the program'
 
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #

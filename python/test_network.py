@@ -7,8 +7,6 @@ from log import init_logging
 from network import TCPServer
 from network import TCPClient
 
-init_logging()
-
 def server(instance):
     """manage the server"""
     while True:
@@ -17,6 +15,7 @@ def server(instance):
 
 def main():
     """run the test"""
+    init_logging()
     tcpserver = TCPServer()
     start_new_thread(server, (tcpserver,))
     sleep(1)
@@ -24,4 +23,5 @@ def main():
     ccon = test.connect()
     ccon.rpc_call("help")
 
-main()
+if __name__ == "__main__":
+    main()

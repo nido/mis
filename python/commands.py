@@ -54,7 +54,7 @@ def get_filedata(shasum):
             if (path['node'] == node() and
                     exists(path['path'])):
                 result = _get_local_file(path['path'])
-                break # break out of for path
+                break # break out of 'for path'
     # TODO: implement network fetch
     return result
 
@@ -81,7 +81,10 @@ def _get_local_file(filename):
 
 def usage(arg = None): # pylint: disable-msg=W0613
     """echos how to use this executable"""
-    print """
+    if(arg):
+        help(arg)
+    else:
+        print """
 batch
     asks you for keys and forces you to input that data for all entries in the database
 help

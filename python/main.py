@@ -6,7 +6,7 @@ from os.path import abspath
 from logging import getLogger
 
 from log import init_logging
-from consoleinput import Console
+from consoleinput import console
 from commands import index
 from commands import usage
 from consoleinput import batch_update
@@ -30,9 +30,7 @@ def main():
         if argv[1] == 'batch':
             batch_update()
     else:
-        console = Console()
-        usage()
-        console.attach()
+        console()
 
 if __name__ == "__main__":
     main()
