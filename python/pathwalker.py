@@ -21,7 +21,7 @@ def get_filter():
             'flv', 'ogg','mov', 'mp3', 'ac3', 'rm', 'ram', \
             'wmv', '3gp', 'aac', 'asf', 'h263', 'webm', 'm4a', \
             '3g2', 'mj2']
-    regexstring = '\.('
+    regexstring = r'\.('
     for extension in extensions:
         regexstring = regexstring + extension + '|'
     regexstring = regexstring[:-1] + ')$'
