@@ -39,4 +39,4 @@ doxygen: $(mis_PYTHON)
 misdir = $(pyexecdir)/mis
 couchdbdir = @couchdbdir@
 
-DISTCLEANFILES = mis.conf mis.spec
+DISTCLEANFILES = mis mis.conf mis.spec
