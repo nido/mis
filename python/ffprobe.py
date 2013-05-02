@@ -21,8 +21,8 @@ def test_ffprobe():
 -version'"""
     result = False
     command = ['ffprobe', '-version']
-    ffprobe = Popen(command, stdout = PIPE, stderr = PIPE)
-    return_code = ffprobe.wait()
+    ffprobe = Popen(command, stdout = PIPE, stderr = PIPE) # pylint: disable-msg=E1101,C0301
+    return_code = ffprobe.wait() # pylint: disable-msg=E1101
     if return_code == 0:
         result = True
     return result
@@ -75,13 +75,13 @@ class Prober:
         """execute the program and read the file"""
         command = ["ffprobe", "-loglevel", "quiet",
                 "-show_format", "-show_streams", self.raw_filename]
-        ffprobe = Popen(command, stdout = PIPE, stderr = PIPE)
-        return_code = ffprobe.wait()
+        ffprobe = Popen(command, stdout = PIPE, stderr = PIPE) # pylint: disable-msg=E1101,C0301
+        return_code = ffprobe.wait()  # pylint: disable-msg=E1101
         if return_code != 0:
             LOG.error('ffprobe command failed: ' +
                     reduce(lambda s,y: s + ' ' + y,command))
             return None
-        return ffprobe.stdout.read()
+        return ffprobe.stdout.read()  # pylint: disable-msg=E1101
 
     def extract_tags(self):
         """Takes the TAG:key values from the streams and containers
