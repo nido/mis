@@ -24,11 +24,11 @@ mis:
 .in.conf:
 	cat $< | sed "s#@jsdir@#$(couchdbdir)#g" > $@
 
-epylint: $(mis_PYTHON)
-	cd python && epylint *.py
+pychecker: $(mis_PYTHON)
+	cd python && pychecker --only *.py
 
 pylint: $(mis_PYTHON)
-	cd python && pylint *.py
+	cd python && pylint --disable=W0511 *.py
 
 pyflakes:$(mis_PYTHON)
 	pyflakes $<
