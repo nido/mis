@@ -25,7 +25,7 @@ mis:
 	cat $< | sed "s#@jsdir@#$(couchdbdir)#g" > $@
 
 pychecker: $(mis_PYTHON)
-	cd python && pychecker --only *.py
+	pychecker --only --no-noeffect $^
 
 pylint: $(mis_PYTHON)
 	cd python && pylint --disable=W0511 *.py
