@@ -1,0 +1,58 @@
+MIS User Story Design Document
+==============================
+
+The next step after it doing something that i script against to do
+stuff is making it actually do the stuff itself. User stories define the
+functionality the product requires, and can be beneficial in creating a
+preliminary FAQ section.
+
+Terminology:
+------------
+node: single instance of mis, from the perspective of running it in a network
+maintenance time: a moment in time when the program can be restarted
+filedata: actual contents of a media file
+metadata: information about the contents of a media file
+
+Roles:
+------
+administrator: administrator of the mis system, responsible for one or
+              multiple nodes
+
+
+User stories:
+-------------
+template: "As <who> <when> <where>, I <what> because <why>."
+
+As administrator, at chosen times, from the console, I need to be able
+to import all media data into mis because mis should handle all media
+data.
+
+As administrator, at chosen times, regardless of location, i want to be
+able to check integrity of the stored data because in huge volumes,
+bit rot becomes an issue
+
+As administrator, when corruption is found, regardless of location, I
+want the possibility of automatic correction where possible because I
+only care about corrupt data when good data is unavailable
+
+As administrator, at maintenance time, i want to be able to set a
+minimum redundancy of filedata per node
+
+As administrator, at any time, i want to be able to set a
+minimum redundancy of filedata per network of mis system
+
+As administrator, when configuring a node, i want to be able to set
+levels of trust in other nodes
+
+As user, at any time, though some ui, I want to access my media
+filedata because i want mis to to able to serve media data
+
+As user, at any time, through some ui, I want to search my media
+metadata because i can't remember all my media id's
+
+As user, at any time, through some ui, I want the ability to add
+metadata because some metadata cannot be discovered
+
+As user, at any time, through some ui, I want the ability to change
+metadata because metadata can be incorrect
+
