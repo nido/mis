@@ -3,6 +3,7 @@
 from commands import get_function
 from database import Database
 
+
 def batch_update():
     """does a batch update through the console"""
     database = Database()
@@ -12,7 +13,8 @@ def batch_update():
         if len(entry) == 128:
             userdict = meatware.input_data()
             database.add_userdata(entry, userdict)
-        
+
+
 class Consoleinput:
     """class holding it"""
     def __init__(self):
@@ -33,7 +35,8 @@ class Consoleinput:
             answer = raw_input()
             result[field] = answer
         return result
-            
+
+
 def console():
     """function for inputting commands into mis directly."""
     print "Media Information System - Console"
@@ -50,14 +53,14 @@ def console():
             batch_update()
         else:
             command = get_function(text)
-            if command == None:
+            if command is None:
                 print "Invalid command: " + text
                 continue
             (function, argument) = get_function(text)
             result = function(argument[1:])
-            if result != None:
+            if result is not None:
                 print(result)
-        if text == 'help': # add 'exit' to the list hack
+        if text == 'help':  # add 'exit' to the list hack
             print 'exit: exit the program'
 
 # vim: set tabstop=4 shiftwidth=4 expandtab textwidth=66 foldmethod=indent: #

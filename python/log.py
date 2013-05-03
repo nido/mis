@@ -49,22 +49,24 @@ DEBUGLOGFILE = expanduser('~/.mis/debug.log')
 LOG = getLogger('mis.log')
 
 STR_LVL = {"debug": DEBUG,
-        "info": INFO,
-        "warn": WARN,
-        "error": ERROR,
-        "critical": CRITICAL}
+           "info": INFO,
+           "warn": WARN,
+           "error": ERROR,
+           "critical": CRITICAL}
 
-LVL_STR = dict((v, k) for k, v in STR_LVL.iteritems()) # invert STR_LVL
+# invert STR_LVL
+LVL_STR = dict((v, k) for k, v in STR_LVL.iteritems())
 
 
 def get_loglevel(string):
     """returns the loglevel belonging to a string"""
     result = None
-    if STR_LVL.has_key(string):
+    if string in STR_LVL:
         result = STR_LVL[string]
     else:
         LOG.warn("loglevel '" + string + "' is unknown")
     return result
+
 
 def set_loglevels():
     """Sets the loglevels as configured (be config file later)"""
@@ -72,17 +74,18 @@ def set_loglevels():
     getLogger('mis.config').setLevel(DEBUG)
     cfg = get_config()
     level_config = cfg.list_section(section)
-    if level_config != None:
+    if level_config is not None:
         for setting in level_config:
             value = cfg.get(section, setting)
             loglevel = get_loglevel(value)
-            if loglevel == None:
+            if loglevel is None:
                 LOG.error("The config states an illegal loglevel for "
-                        + section)
+                          + section)
             else:
                 LOG.debug("setting custom loglevel " +
-                        LVL_STR[loglevel] + " for " + setting)
+                          LVL_STR[loglevel] + " for " + setting)
                 getLogger(setting).setLevel(loglevel)
+
 
 def init_logging():
     """initialises logging"""
@@ -90,23 +93,23 @@ def init_logging():
     if not isdir(config_dir):
         makedirs(config_dir)
 
-    fileformatter = Formatter("%(asctime)s - %(name)s - " + \
-            "%(levelname)s - %(message)s")
+    fileformatter = Formatter("%(asctime)s - %(name)s - " +
+                              "%(levelname)s - %(message)s")
 
     #pre-create the log file in order to check its existence.
-    open(LOGFILE, 'a').close() 
-    open(DEBUGLOGFILE, 'a').close() 
+    open(LOGFILE, 'a').close()
+    open(DEBUGLOGFILE, 'a').close()
 
     rootlog = getLogger('mis')
     rootlog.setLevel(INFO)
 
-    handler = RotatingFileHandler(LOGFILE, maxBytes=10000000, backupCount = 5)
+    handler = RotatingFileHandler(LOGFILE, maxBytes=10000000, backupCount=5)
     handler.setLevel(INFO)
     handler.setFormatter(fileformatter)
     rootlog.addHandler(handler)
 
     handler = RotatingFileHandler(DEBUGLOGFILE, maxBytes=10000000,
-            backupCount = 5)
+                                  backupCount=5)
     handler.setLevel(DEBUG)
     handler.setFormatter(fileformatter)
     rootlog.addHandler(handler)

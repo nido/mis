@@ -3,7 +3,7 @@
 configuration comes in the following flavours, from least to most
 precedense: default configuration (whatever is done when not
 defined (as in, A: this should be documented behavior, and B: this
-program should work without config files ), global configuration 
+program should work without config files ), global configuration
 (what is found in /etc/mis.conf (or
 equivalent once one is defined)), user configuration (defined in
 ~/.mis/config), argument configuration (added at the
@@ -20,12 +20,13 @@ from ConfigParser import SafeConfigParser
 from ConfigParser import NoSectionError
 
 LOG = getLogger('mis.config')
-SINGLETON = None #: Singleton holds the configuration itself.
+SINGLETON = None  #: Singleton holds the configuration itself.
+
 
 def get_config():
     """returns the configuration"""
-    global SINGLETON # pylint: disable-msg=W0603
-    if(SINGLETON == None):
+    global SINGLETON  # pylint: disable-msg=W0603
+    if(SINGLETON is None):
         SINGLETON = Configuration()
     return SINGLETON
 
@@ -64,11 +65,12 @@ blissfully ignorant of the defaultness of said configuration."""
     config.set('couchdb', 'javascript_directory', 'javascript')
     return config
 
+
 class Configuration():
     """the configuration itself, dictionary like. We'll be using
 python's very own ConfigParser."""
     system_file = '/etc/mis.conf'
-    user_filename  = expanduser('~/.mis/config')
+    user_filename = expanduser('~/.mis/config')
 
     def __init__(self):
         """initialises the configurations"""
@@ -78,7 +80,7 @@ python's very own ConfigParser."""
         if not exists(self.user_filename):
             if not exists(dirname(self.user_filename)):
                 makedirs(dirname(self.user_filename))
-            self._parser.write(open(self.user_filename,'w'))
+            self._parser.write(open(self.user_filename, 'w'))
         self.userconfig.read([self.user_filename])
         LOG.info("Configuration initialised")
 
@@ -88,8 +90,8 @@ python's very own ConfigParser."""
         if self._parser.has_section(section):
             result = self._parser.options(section)
         else:
-            LOG.debug("cannot log section " + section + 
-                    ", it doesn't exist.")
+            LOG.debug("cannot log section " + section +
+                      ", it doesn't exist.")
         return result
 
     def get(self, section, name):
@@ -100,7 +102,6 @@ python's very own ConfigParser."""
         except NoSectionError:
             LOG.warn("Section " + section + " doesn't exist.")
         return result
-        
 
     def set(self, section, name, value, permanent=False):
         """sets a configuration option"""
@@ -111,7 +112,7 @@ python's very own ConfigParser."""
             if (not self.userconfig.has_section(section)):
                 self.userconfig.add_section(section)
             self.userconfig.set(section, name, value)
-            user_file = open(self.user_filename,'w')
+            user_file = open(self.user_filename, 'w')
             self.userconfig.write(user_file)
             user_file.close()
 

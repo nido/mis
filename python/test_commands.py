@@ -12,14 +12,16 @@ from commands import _get_local_file
 from log import init_logging
 from pathwalker import Pathwalker
 
+
 def invalid_function():
     """no good function that does nothing"""
     pass
 
-class TestCommandModule(TestCase): # pylint: disable-msg=R0904
+
+class TestCommandModule(TestCase):  # pylint: disable-msg=R0904
     """tests command.py"""
 
-    def setUp(self): # pylint: disable-msg=C0103
+    def setUp(self):  # pylint: disable-msg=C0103
         init_logging()
 
     def test_get_function(self):
@@ -27,7 +29,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         command_string = "get filedatabla"
         # get a valid function
         self.assertEqual(get_function(command_string)[0],
-                get_filedata)
+                         get_filedata)
         # get an invalid function
         self.assertEqual(get_function('invalid command'), None)
 
@@ -36,7 +38,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         command_string = "get filedata"
         # get an existing command
         self.assertEqual(get_command(get_filedata),
-                command_string)
+                         command_string)
         # get an illegal command
         self.assertEqual(get_command(invalid_function), None)
 
@@ -44,7 +46,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         """Tests the filedata extractor"""
         # get check data
         filedata = file('test_files/test.avi').read()
-        from hashlib import sha512 # pylint: disable-msg=E0611
+        from hashlib import sha512  # pylint: disable-msg=E0611
         shasum = sha512(filedata).hexdigest()
         # add to database
         Pathwalker().evaluate_path('test_files')
@@ -59,6 +61,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         self.assertEqual(test, filedata)
         # text nonexistent file
         self.assertEqual(_get_local_file(''), None)
+
 
 if __name__ == '__main__':
     main()

@@ -14,6 +14,7 @@ from database import Database
 
 LOG = getLogger('mis.commands')
 
+
 def get_function(string):
     """ Returns a tuple containing the string and accompanying
         argument. Returns None on an invalid command"""
@@ -24,13 +25,14 @@ def get_function(string):
         if name == string[:len(name)]:
             command = COMMAND_DICT[name]
             argument = string[len(name):]
-            break # optimisation: breakout of for loop
-    if command == None:
+            break  # optimisation: breakout of for loop
+    if command is None:
         LOG.info('received invalid command:')
         LOG.info(string)
     else:
         result = (command, argument)
     return result
+
 
 def get_command(function):
     """ Returns the command string that belongs to the function,
@@ -42,32 +44,35 @@ def get_command(function):
             break
     return result
 
+
 def get_filedata(shasum):
     """Gives the contents of said shasum"""
     result = None
     database = Database()
     document = database.get_document(shasum)
     LOG.debug('get filedata shasum ' + shasum + ' doc: ' +
-            str(document))
-    if document != None and document.has_key('paths'):
+              str(document))
+    if (document is not None) and ('paths' in document):
         for path in document['paths']:
             if (path['node'] == node() and
                     exists(path['path'])):
                 result = _get_local_file(path['path'])
-                break # break out of 'for path'
+                break  # break out of 'for path'
     # TODO: implement network fetch
     return result
 
+
 def index(path):
     """Indexes a directory"""
-    if path == None:
+    if path is None:
         path = abspath("../test_files")
 
     if isdir(path):
-        walker = Pathwalker()   
+        walker = Pathwalker()
         walker.evaluate_path(path)
     else:
         LOG.error(path + 'is not a directory')
+
 
 def _get_local_file(filename):
     """Returns the file data from the file."""
@@ -79,14 +84,15 @@ def _get_local_file(filename):
         LOG.error("No file found at " + filename)
     return filedata
 
-def usage(arg = None): # pylint: disable-msg=W0613
+
+def usage(arg=None):  # pylint: disable-msg=W0613
     """echos how to use this executable"""
     if(arg):
         help(arg)
     else:
         print """
 batch
-    asks you for keys and forces you to input that data for all entries in the database
+    stupid legacy function
 help
     display this text.
 index [directory]
@@ -96,7 +102,7 @@ readfile path
     returns the content of a file at path
 """
 
-        
+
 COMMAND_DICT = {
     'get filedata': get_filedata,
     'readfile': _get_local_file,

@@ -7,11 +7,13 @@ from log import init_logging
 from network import TCPServer
 from network import TCPClient
 
+
 def server(instance):
     """manage the server"""
     while True:
         scon = instance.accept()
         scon.rpc_listen()
+
 
 def main():
     """run the test"""
@@ -22,6 +24,7 @@ def main():
     test = TCPClient('127.0.0.1')
     ccon = test.connect()
     ccon.rpc_call("help")
+
 
 if __name__ == "__main__":
     main()

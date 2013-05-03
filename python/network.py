@@ -1,43 +1,47 @@
-""" The network protocol is designed to allow two way communication through
-a single tcp connection. After a connection is made, both nodes may assume
-the client role of a normal client-server model.
+""" The network protocol is designed to allow two way
+communication through a single tcp connection. After a connection
+is made, both nodes may assume the client role of a normal
+client-server model.
 
 the size of requests/replies can vary from a boolean value to 'the
-complete media library'. E.g. In case node A makes a big request to
-node B, at the very least node B should be able to take requests from node A.
+complete media library'. E.g. In case node A makes a big request
+to node B, at the very least node B should be able to take
+requests from node A.
 
-Because of this, we use a little 'network' protocol within the network protocol.
-The purpose of this protocol is to 'emulate' bidirectional rcp connections
-over a single tcp connection.
+Because of this, we use a little 'network' protocol within the
+network protocol.  The purpose of this protocol is to 'emulate'
+bidirectional rcp connections over a single tcp connection.
 
 the client of the tcp connection is called node A. the server of
-the tcp connection is node B. Each transmission is tagged with 
-the originating rpc node, a transaction identifier, and a package size field,
-and a request/response size field.
+the tcp connection is node B. Each transmission is tagged with the
+originating rpc node, a transaction identifier, and a package size
+field, and a request/response size field.
 
 To start of with the transaction identifier, since nodes should be
 able to send multiple requests to the other server, it makes sense
 to identify them individually over the single connection.
 
-the originating rpc node identifier allows for both hosts to have a 
-individual pool of transaction numbers, eliminating the need to synchronise
-transaction numbers.
+the originating rpc node identifier allows for both hosts to have
+a individual pool of transaction numbers, eliminating the need to
+synchronise transaction numbers.
 
 the message size field is the size of the complete message,
-excluding overhead from the package(s) used, this allows to track wether
-or not a request is fulfilled without knowing about the underlying data.
+excluding overhead from the package(s) used, this allows to track
+wether or not a request is fulfilled without knowing about the
+underlying data.
 
-the package size is the size of the current packet, including the overhead
-of the headers. this allows to identify packages regarding the underlying
-structure or protocol.
+the package size is the size of the current packet, including the
+overhead of the headers. this allows to identify packages
+regarding the underlying structure or protocol.
 
-we rely on underlying protocols to guarantee us a complete, sequential
-and correct bitstream. Therefore we do not use error correction/checking,
-sequence numbers or other safeguards. However, the protocol should be
-implemented to allow later versions of the protocol and negotiation
-on which version to use, in order to allow extensions in the future
-SSL encryption should be
-used as well in order to further guarantee integrity of the bitsream.
+we rely on underlying protocols to guarantee us a complete,
+sequential and correct bitstream. Therefore we do not use error
+correction/checking, sequence numbers or other safeguards.
+However, the protocol should be implemented to allow later
+versions of the protocol and negotiation on which version to use,
+in order to allow extensions in the future SSL encryption should
+be used as well in order to further guarantee integrity of the
+bitsream.
 """
 
 from os import error as oserror
@@ -53,12 +57,14 @@ from commands import get_function
 from logging import getLogger
 LOG = getLogger('mis.network')
 
+
 def intb4(integer):
     """Turns a number into a 32bit byte array"""
     byte_array = bytearray()
     for i in [3, 2, 1, 0]:
         byte_array.append((integer / (256**i)) % 256)
     return byte_array
+
 
 def b4int(byte_array):
     """Turns a 32bit byte array into a number"""
@@ -67,7 +73,6 @@ def b4int(byte_array):
         integer = integer + byte_array[3-i]*(256**i)
     return integer
 
-    
 
 class Connection:
     """Responsible for the connection. Actual network stuff rather
@@ -81,7 +86,7 @@ class Connection:
         result.
         Needs a layer where it waits for the right return command
         and separate the calls from the send/receive functions"""
-        if command == None:
+        if command is None:
             LOG.error("Cannot send empty command")
             return
         self._send(command)
@@ -96,14 +101,14 @@ class Connection:
         command = self._recv()
         cmd = get_function(command)
         print(cmd)
-        if cmd == None:
+        if cmd is None:
             LOG.error("Received an invalid command: Aborting. ")
             LOG.error(command)
             return
         (function, arguments) = cmd
         LOG.info(command[:12] + " - " + str(function) + " - " + arguments)
         result = function(arguments)
-        if result == None:
+        if result is None:
             LOG.error("Function returned nothing. something went wrong.")
             result = ""
         self._send(result)
@@ -119,8 +124,8 @@ class Connection:
         # and a transaction number
         packet += intb4(randint(0, 2**32 - 1))
         packet += bytearray(data)
-        LOG.debug('sent transaction ' + 
-                str(b4int(packet[4:8])))
+        LOG.debug('sent transaction ' +
+                  str(b4int(packet[4:8])))
         return self.socket.sendall(packet)
 
     def _recv(self):
@@ -136,15 +141,15 @@ class Connection:
         LOG.debug("packet size " + str(packet_size))
         packet = packet + bytearray(self.socket.recv(packet_size))
         LOG.debug('received transaction ' +
-                str(b4int(packet[4:8])))
+                  str(b4int(packet[4:8])))
         return packet[8:]
-    
-    
+
+
 class TCPServer:
     """The daemon listens on a specified port and forwards
     set-up to a handler. The daemon is also required to verify it's
     peers and to secure the connection."""
-    
+
     def __init__(self):
         """initialises"""
         config = get_config()
@@ -153,7 +158,7 @@ class TCPServer:
         self.socket = network_socket(AF_INET, SOCK_STREAM)
         self.socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         LOG.debug('started socket on "' + str(self.host) + '" port "' +
-                str(self.port) + '". binding')
+                  str(self.port) + '". binding')
         self.socket.bind((self.host, self.port))
         LOG.debug('bind complete')
 
@@ -169,9 +174,10 @@ class TCPServer:
         """disconnects the socket"""
         self.socket.close()
 
+
 class TCPClient:
     """The tcp client creates a tcp connection to the server."""
-    
+
     def __init__(self, host, port=None):
         config = get_config()
         self.port = int(config.get('network', 'port'))
@@ -180,7 +186,6 @@ class TCPClient:
             self.port = port
         self.socket = network_socket(AF_INET, SOCK_STREAM)
 
-
     def connect(self):
         """activates the connection and returns the Connection"""
         try:
@@ -188,7 +193,7 @@ class TCPClient:
             return Connection(self.socket, self.host)
         except oserror as error:
             LOG.info("Connection refused to " + self.host + ":"
-                    + str(self.port))
+                     + str(self.port))
             LOG.info(error)
             return None
 
