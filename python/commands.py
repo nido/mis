@@ -98,6 +98,7 @@ readfile path
 
         
 COMMAND_DICT = {
+    'get filedata': get_filedata,
     'readfile': _get_local_file,
     'index': index,
     'help': usage

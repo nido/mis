@@ -26,7 +26,7 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
         """tests if the get_function method works"""
         command_string = "get filedatabla"
         # get a valid function
-        self.assertEqual(get_function(command_string),
+        self.assertEqual(get_function(command_string)[0],
                 get_filedata)
         # get an invalid function
         self.assertEqual(get_function('invalid command'), None)
@@ -43,19 +43,19 @@ class TestCommandModule(TestCase): # pylint: disable-msg=R0904
     def test_get_filedata(self):
         """Tests the filedata extractor"""
         # get check data
-        filedata = file('../test_files/test.avi').read()
+        filedata = file('test_files/test.avi').read()
         from hashlib import sha512 # pylint: disable-msg=E0611
         shasum = sha512(filedata).hexdigest()
         # add to database
-        Pathwalker().evaluate_path('../test_files')
+        Pathwalker().evaluate_path('test_files')
         self.assertEqual(get_filedata(shasum), filedata)
         # text nonexistent file fetch
         self.assertEqual(get_filedata('invalid_doc'), None)
 
     def test__get_local_file(self):
         """Tests if _get_local_file works correctly"""
-        filedata = file('../test_files/test.avi').read()
-        test = _get_local_file('../test_files/test.avi')
+        filedata = file('test_files/test.avi').read()
+        test = _get_local_file('test_files/test.avi')
         self.assertEqual(test, filedata)
         # text nonexistent file
         self.assertEqual(_get_local_file(''), None)
