@@ -9,7 +9,7 @@ URL:		@PACKAGE_URL@
 Source0:	@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 
 #BuildRequires:	
-#Requires:	
+Requires:	python
 
 %description
 Media Information System
@@ -26,14 +26,13 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=%{buildroot}
 
-
 %files
-%_bindir/mis
-%_libdir/python@PYTHON_VERSION@/site-packages/mis/*.py
-%_libdir/python@PYTHON_VERSION@/site-packages/mis/*.pyc
-%_libdir/python@PYTHON_VERSION@/site-packages/mis/*.pyo
-%_libdir/mis/*.js
-%_sysconfdir/mis.conf
+%{_bindir}/mis
+%{_libdir}/python@PYTHON_VERSION@/site-packages/mis/*.py
+%{_libdir}/python@PYTHON_VERSION@/site-packages/mis/*.pyc
+%{_libdir}/python@PYTHON_VERSION@/site-packages/mis/*.pyo
+%{_libdir}/mis/*.js
+%{_sysconfdir}/mis.conf
 %doc
 
 
