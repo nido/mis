@@ -62,7 +62,7 @@ def intb4(integer):
     """Turns a number into a 32bit byte array"""
     byte_array = bytearray()
     for i in [3, 2, 1, 0]:
-        byte_array.append((integer / (256**i)) % 256)
+        byte_array.append((integer / (256 ** i)) % 256)
     return byte_array
 
 
@@ -70,7 +70,7 @@ def b4int(byte_array):
     """Turns a 32bit byte array into a number"""
     integer = 0
     for i in (0, 1, 2, 3):
-        integer = integer + byte_array[3-i]*(256**i)
+        integer = integer + byte_array[3 - i] * (256 ** i)
     return integer
 
 
@@ -120,9 +120,9 @@ class Connection:
         # we send and receive packets.
         packet = bytearray()
         # Let's just add a size argument for now
-        packet += intb4(len(data)+8)
+        packet += intb4(len(data) + 8)
         # and a transaction number
-        packet += intb4(randint(0, 2**32 - 1))
+        packet += intb4(randint(0, 2 ** 32 - 1))
         packet += bytearray(data)
         LOG.debug('sent transaction ' +
                   str(b4int(packet[4:8])))

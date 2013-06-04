@@ -20,7 +20,7 @@ from ConfigParser import SafeConfigParser
 from ConfigParser import NoSectionError
 
 LOG = getLogger('mis.config')
-SINGLETON = None  #: Singleton holds the configuration itself.
+SINGLETON = None  # Singleton holds the configuration itself.
 
 
 def get_config():
